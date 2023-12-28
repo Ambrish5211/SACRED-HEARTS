@@ -40,9 +40,12 @@ INSTALLED_APPS = [
 ]
 
 EXTERNAL_APPS = [
-    'Home',
-    'Authentication'
+    'Movies',
+    'Authentication',
+    'rest_framework',
 ]
+
+INSTALLED_APPS += EXTERNAL_APPS
 
 
 MIDDLEWARE = [

@@ -7,3 +7,6 @@ class Movie_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Movies
         fields = '__all__'
+        extra_kwargs = {
+            'thumbnail': {'required': False},
+        }

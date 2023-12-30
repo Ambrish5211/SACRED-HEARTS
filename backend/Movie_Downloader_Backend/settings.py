@@ -56,6 +56,7 @@ EXTERNAL_APPS = [
     'Movies',
     'Authentication',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
@@ -154,3 +155,12 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+AUTH_USER_MODEL = 'Authentication.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # Other settings...
+}

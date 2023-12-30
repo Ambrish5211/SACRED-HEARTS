@@ -13,7 +13,6 @@ class Movies(models.Model):
     description = models.TextField(default= "default")
     release_date = models.DateField(null=True, auto_now = True)
     duration_minutes = models.PositiveIntegerField(default = 0)
-    video_url = models.URLField(null=True)  
     genres = models.CharField(max_length=100, choices=
                               (('Fantasy', 'Fantasy'),
                                ('Adventure', 'Adventure'),

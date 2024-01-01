@@ -2,16 +2,15 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
-// import Footer from "../Components/Footer";
-// import { logout } from "../redux/slices/authSlice";
+import { logoutSuccess } from "../redux/slices/authSlice";
+import Footer from "../Components/Footer";
 
 function HomeLayout({ children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  //   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
-  //   const role = useSelector((state) => state?.auth?.role);
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const role = useSelector((state) => state?.auth?.role);
 
   function changeWidth() {
     const drawerSide = document.getElementsByClassName("drawer-side");
@@ -26,15 +25,15 @@ function HomeLayout({ children }) {
     drawerSide[0].style.width = "0";
   }
 
-  //   async function onLogout(e) {
-  //     e.preventDefault();
+  async function onLogout(e) {
+    e.preventDefault();
 
-  //     const response = await dispatch(logout());
-  //     if (response?.payload?.data?.success) navigate("/");
-  //   }
+    dispatch(logoutSuccess());
+    if (response?.payload?.data) navigate("/");
+  }
 
   return (
-    <div className="min-h-[90vh]">
+    <div className="min-h-[65-vh]">
       <div className="drawer absolute left-0 z-50 w-full">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
@@ -57,16 +56,6 @@ function HomeLayout({ children }) {
             <li>
               <Link to="/"> Home </Link>
             </li>
-            {/* {isLoggedIn && role === "ADMIN" && (
-              <li>
-                <Link to="/admin/dashboard">Admin Dashboard</Link>
-              </li>
-            )} */}
-            {/* {isLoggedIn && role === "ADMIN" && (
-              <li>
-                <Link to="/courses/create">Create Course</Link>
-              </li>
-            )} */}
             <li>
               <Link to="/about"> About us </Link>
             </li>
@@ -77,29 +66,25 @@ function HomeLayout({ children }) {
               <Link to="/courses"> All courses </Link>
             </li>
 
-            {true ? (
+            {!isLoggedIn ? (
               <li className="absolute bottom-4 w-[90%]">
                 <div className="w-full flex items-center justify-center">
                   <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full bg-red-600 ">
-                    {/* <Link to="/signin">Login</Link> */}
-                    Login
+                    <Link to="/login">Login</Link>
                   </button>
                   <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full bg-blue-800">
-                    {/* <Link to="/signup">Signup</Link> */}
-                    Signup
+                    <Link to="/register">Signup</Link>
                   </button>
                 </div>
               </li>
             ) : (
               <li className="absolute bottom-4 w-[90%]">
                 <div className="w-full flex items-center justify-center">
-                  <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full">
-                    {/* <Link to="/user/profile">Profile</Link> */}
+                  <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full  bg-red-600">
                     Profile
                   </button>
-                  <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full">
-                    {/* <Link onClick={onLogout}>Logout</Link> */}
-                    Logout
+                  <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full  bg-blue-800">
+                    <Link onClick={onLogout}>Logout</Link>
                   </button>
                 </div>
               </li>
@@ -110,7 +95,7 @@ function HomeLayout({ children }) {
 
       {children}
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

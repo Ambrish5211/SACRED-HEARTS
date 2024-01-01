@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import CourseCard from "../../Components/CourseCard";
+// import CourseCard from "../../Components/CourseCard";
 import HomeLayout from "../../Layouts/HomeLayout";
-import { getAllCourses } from "../../redux/slices/courseSlice";
-
-function CourseList() {
+import { getAllMovies } from "../../redux/slices/movieSlice";
+function MoviesList() {
   const dispatch = useDispatch();
 
-  const { courseList } = useSelector((state) => state.course);
+  const { movieList } = useSelector((state) => state.movie);
 
-  async function loadCourses() {
-    await dispatch(getAllCourses());
+  async function loadMovies() {
+    await dispatch(getAllMovies());
   }
 
   useEffect(() => {
@@ -26,7 +25,7 @@ function CourseList() {
           <span className="font-bold text-yellow-500">Industry experts</span>
         </h1>
         <div className="mb-10 flex flex-wrap gap-16 justify-between px-12">
-          {courseList?.map((element) => {
+          {movieList?.map((element) => {
             return <CourseCard key={element._id} data={element} />;
           })}
         </div>
@@ -35,4 +34,4 @@ function CourseList() {
   );
 }
 
-export default CourseList;
+export default MoviesList;

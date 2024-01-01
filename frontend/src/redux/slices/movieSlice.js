@@ -11,15 +11,14 @@ export const getAllMovies = createAsyncThunk(
   "/movies/getAllMovies",
   async (data) => {
     try {
-      const response = axiosInstance.get("/movies", data);
+      const response = axiosInstance.get("/movies/", data);
+      console.log(response);
       toast.promise(response, {
         loading: "Wait! Fetching all courses",
-        success: (data) => {
-          return data?.data?.message;
-        },
+        success: "Success",
         error: "Failed to load your courses",
       });
-      return (await response).data.courses;
+      return (await response).data;
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
@@ -32,9 +31,10 @@ const movieSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllCourses.fulfilled, (state, action) => {
+    builder.addCase(getAllMovies.fulfilled, (state, action) => {
+      console.log(action.payload);
       if (action?.payload) {
-        state.courseList = [...action.payload];
+        state.movieList = [...action.payload];
       }
     });
   },

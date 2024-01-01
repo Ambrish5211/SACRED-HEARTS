@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// import CourseCard from "../../Components/CourseCard";
 import HomeLayout from "../../Layouts/HomeLayout";
 import { getAllMovies } from "../../redux/slices/movieSlice";
+import MoviesCard from "../../Components/MoviesCard";
 function MoviesList() {
   const dispatch = useDispatch();
 
@@ -14,7 +14,7 @@ function MoviesList() {
   }
 
   useEffect(() => {
-    loadCourses();
+    loadMovies();
   }, []);
 
   return (
@@ -26,7 +26,7 @@ function MoviesList() {
         </h1>
         <div className="mb-10 flex flex-wrap gap-16 justify-between px-12">
           {movieList?.map((element) => {
-            return <CourseCard key={element._id} data={element} />;
+            return <MoviesCard key={element.movie_id} data={element} />;
           })}
         </div>
       </div>

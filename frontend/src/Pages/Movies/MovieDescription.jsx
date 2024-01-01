@@ -5,7 +5,8 @@ import HomeLayout from "../../Layouts/HomeLayout";
 
 export default function MovieDescription() {
   const { state } = useLocation();
-  const trailer = state.trailer;
+  const trailer = `${state.trailer}?f_auto=mp4`;
+  console.log(trailer);
   const thumbnail = state.thumbnail;
   return (
     <HomeLayout>

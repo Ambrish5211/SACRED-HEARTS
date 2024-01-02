@@ -7,6 +7,7 @@ import MoviesList from "./Pages/Movies/MoviesList";
 import MovieDescription from "./Pages/Movies/MovieDescription";
 import Notfound from "./Pages/NotFound";
 import RequireAuth from "./Components/RequireAuth";
+import Contact from "./Pages/Contact";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           element={<MovieDescription />}
         ></Route>
       </Route>
-
+      <Route path="/contact" element={<Contact />}></Route>
       <Route path="*" element={<Notfound />}></Route>
     </Routes>
   );

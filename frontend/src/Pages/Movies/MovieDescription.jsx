@@ -2,6 +2,7 @@ import React from "react";
 import VideoPlayer from "../../Components/VideoPlayer";
 import { useLocation } from "react-router-dom";
 import HomeLayout from "../../Layouts/HomeLayout";
+import { AiOutlineDownload } from "react-icons/ai";
 
 export default function MovieDescription() {
   const { state } = useLocation();
@@ -47,13 +48,16 @@ export default function MovieDescription() {
   return (
     <HomeLayout>
       <div className="flex gap-5">
-        <div className="min-h-[90vh] pt-16 px-20 items-center justify-center text-white">
-          <VideoPlayer trailer={trailer} thumbnail={thumbnail} />{" "}
+        <div className="min-h-[90vh] pt-13 px-20 items-center flex flex-col gap-8 justify-center text-white">
+          <VideoPlayer trailer={movie} thumbnail={thumbnail} />{" "}
           <button
-            className="bg-yellow-500 p-4 font-bold "
+            className="bg-yellow-500 px-9 py-3 rounded-md flex text-center gap-1 justify-center align-middle  font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300 "
             onClick={handleDownload}
           >
-            Download
+            <div className="text-xl">Download</div>
+            <div className="mt-1 font-bold text-2xl">
+              <AiOutlineDownload />
+            </div>
           </button>
         </div>
         <div className="pt-16 ">

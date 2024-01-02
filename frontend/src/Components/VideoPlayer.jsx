@@ -8,11 +8,12 @@ const VideoPlayer = ({ trailer, thumbnail }) => {
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
     padding: "16px",
+    background: "#000",
   };
   return (
     <ReactPlayer
       url={trailer}
-      controls={true} // Adds play/pause controls
+      controls={true}
       width="885px"
       height="470px"
       light={thumbnail}

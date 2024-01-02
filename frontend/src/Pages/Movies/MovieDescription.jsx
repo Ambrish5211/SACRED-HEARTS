@@ -69,7 +69,7 @@ export default function MovieDescription() {
             </h1>
             <p className="text-">{description}</p>
           </div>
-          <div className="flex justify-between p-4   ">
+          <div className="flex justify-between p-4 mr-4 ">
             <p>
               <span className="text-yellow-300 font-normal">Genre</span>
               {` : ${genre}`}

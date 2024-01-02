@@ -10,6 +10,7 @@ function HomeLayout({ children }) {
   const navigate = useNavigate();
 
   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const isAdmin = useSelector((state) => state?.auth?.isAdmin);
   const role = useSelector((state) => state?.auth?.role);
 
   function changeWidth() {
@@ -63,7 +64,7 @@ function HomeLayout({ children }) {
               <Link to="/contact"> Contact us </Link>
             </li>
             <li>
-              <Link to="/courses"> All courses </Link>
+              <Link to="/movies"> All movies </Link>
             </li>
 
             {!isLoggedIn ? (
@@ -80,9 +81,14 @@ function HomeLayout({ children }) {
             ) : (
               <li className="absolute bottom-4 w-[90%]">
                 <div className="w-full flex items-center justify-center">
-                  <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full  bg-red-600">
-                    Profile
-                  </button>
+                  {isAdmin ? (
+                    <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full  bg-red-600">
+                      <Link to="http://127.0.0.1:8000/admin">Admin</Link>
+                    </button>
+                  ) : (
+                    ""
+                  )}
+
                   <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full  bg-blue-800">
                     <Link onClick={onLogout}>Logout</Link>
                   </button>

@@ -5,6 +5,7 @@ import axiosInstance from "../../config/axiosInstance";
 
 const initialState = {
   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
+  isAdmin: localStorage.getItem("isAdmin") || false,
 };
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
@@ -43,19 +44,26 @@ const authSlice = createSlice({
     logoutSuccess: (state) => {
       // Reset isLoggedIn state to false
       state.isLoggedIn = false;
+      state.isAdmin = false;
       // Clear the value from local storage
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("isAdmin");
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createAccount.fulfilled, (state, action) => {
         localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("isAdmin", action.payload.data.user.isAdmin);
         state.isLoggedIn = true;
+        state.isAdmin = action.payload.data.user.isAdmin;
       })
       .addCase(login.fulfilled, (state, action) => {
         localStorage.setItem("isLoggedIn", true);
+        console.log(action.payload.data.user.isAdmin);
+        localStorage.setItem("isAdmin", action.payload.data.user.isAdmin);
         state.isLoggedIn = true;
+        state.isAdmin = action.payload.data.user.isAdmin;
       });
   },
 });

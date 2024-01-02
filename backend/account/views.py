@@ -34,7 +34,12 @@ class UserLoginView(APIView):
      user = authenticate(email=email, password=password)
      if user is not None:
       token = get_tokens_for_user(user)
-      return Response({'token':token, 'msg':'Login Success'}, status=status.HTTP_200_OK)
+      user_data = {
+                    'id': user.id,
+                    'email': user.email,
+                    'username': user.username,
+                    'isAdmin': user.is_admin}
+      return Response({'token':token, 'msg':'Login Success', "user": user_data}, status=status.HTTP_200_OK)
      else:
       return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

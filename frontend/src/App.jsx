@@ -5,6 +5,8 @@ import Register from "./Pages/User/Register";
 import Home from "./Pages/Home";
 import MoviesList from "./Pages/Movies/MoviesList";
 import MovieDescription from "./Pages/Movies/MovieDescription";
+import Notfound from "./Pages/NotFound";
+import RequireAuth from "./Components/RequireAuth";
 
 function App() {
   return (
@@ -13,7 +15,14 @@ function App() {
       <Route path="/movies" element={<MoviesList />}></Route>
       <Route path="/login" element={<Login />}></Route>
       <Route path="/register" element={<Register />}></Route>
-      <Route path="/movies/description" element={<MovieDescription />}></Route>
+      <Route element={<RequireAuth />}>
+        <Route
+          path="/movies/description"
+          element={<MovieDescription />}
+        ></Route>
+      </Route>
+
+      <Route path="*" element={<Notfound />}></Route>
     </Routes>
   );
 }

@@ -49,8 +49,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/* Additional content for the right side */}
-          <div className="w-1/2">{/* Add your additional content here */}</div>
+
+          <div className="w-1/2">{/* Additional content here */}</div>
         </div>
       </HomeLayout>
     </>

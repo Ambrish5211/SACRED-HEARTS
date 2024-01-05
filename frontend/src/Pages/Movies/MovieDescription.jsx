@@ -47,11 +47,11 @@ export default function MovieDescription() {
 
   return (
     <HomeLayout>
-      <div className="flex gap-5">
-        <div className="min-h-[90vh] pt-13 px-20 items-center flex flex-col gap-8 justify-center text-white">
-          <VideoPlayer trailer={movie} thumbnail={thumbnail} />{" "}
+      <div className="min-h-[90vh] px-4 pt-[70px] grid lg:grid-cols-3 sm:grid-cols-1 gap-8 px-2">
+        <div className="px-12 items-center flex flex-col gap-10  text-white lg:col-span-2 ">
+          <VideoPlayer trailer={trailer} thumbnail={thumbnail} />
           <button
-            className="bg-yellow-500 px-9 py-3 rounded-md flex text-center gap-1 justify-center align-middle  font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300 "
+            className="bg-yellow-500 px-9 py-3 rounded-md flex text-center gap-1 justify-center align-middle text-white font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300 "
             onClick={handleDownload}
           >
             <div className="text-xl">Download</div>
@@ -60,20 +60,17 @@ export default function MovieDescription() {
             </div>
           </button>
         </div>
-        <div className="pt-16 ">
-          <div className="p-4">
-            <img
-              src={thumbnail}
-              alt={title}
-              className=" border border-opacity-75 shadow-md ring ring-white ring-opacity-75 ml-1 mb-4 "
-            />
-
-            <h1 className="text-5xl mb-3 text-yellow-500 font-normal  ">
-              {title}
-            </h1>
-            <p className="text-">{description}</p>
-          </div>
-          <div className="flex justify-between p-4 mr-4 ">
+        <div className="mt-2">
+          <img
+            src={thumbnail}
+            alt={title}
+            className=" border border-opacity-75 shadow-md ring ring-white ring-opacity-75 ml-1 mb-5 "
+          />
+          <h1 className="text-5xl mb-3 text-yellow-500 font-normal  ">
+            {title}
+          </h1>
+          <p className="text-[16px]">{description}</p>
+          <div className="flex flex-row justify-between mt-4 mb-5 sm: flex-col gap-1.5 ">
             <p>
               <span className="text-yellow-300 font-normal">Genre</span>
               {` : ${genre}`}

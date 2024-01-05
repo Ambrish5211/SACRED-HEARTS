@@ -9,15 +9,25 @@ const VideoPlayer = ({ trailer, thumbnail }) => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
     padding: "16px",
     background: "#000",
+    width: "100%",
   };
   return (
     <ReactPlayer
       url={trailer}
       controls={true}
-      width="885px"
-      height="470px"
       light={thumbnail}
       style={videoPlayerStyle}
+      width="100%"
+      height="80%"
+      config={{
+        youtube: {
+          playerVars: {
+            modestbranding: 1,
+            showinfo: 0,
+            controls: 1,
+          },
+        },
+      }}
     />
   );
 };

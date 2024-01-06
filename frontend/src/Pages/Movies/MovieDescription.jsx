@@ -64,7 +64,7 @@ export default function MovieDescription() {
           <img
             src={thumbnail}
             alt={title}
-            className=" mb-5 ml-1 hidden border border-opacity-75  shadow-md ring ring-white ring-opacity-75 lg:block"
+            className=" mb-5 ml-1 hidden h-64 max-h-full  w-full border border-opacity-75 shadow-md ring ring-white ring-opacity-75 lg:block"
           />
           <h1 className="mb-6 text-center text-5xl font-semibold  text-yellow-500  lg:mb-3 lg:text-left lg:font-normal ">
             {title}

@@ -9,7 +9,6 @@ const VideoPlayer = ({ trailer, thumbnail }) => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
     padding: "16px",
     background: "#000",
-    width: "100%",
   };
   return (
     <ReactPlayer

@@ -20,6 +20,7 @@ class Movies(models.Model):
                                ('Fiction', 'Fiction'),
                                ('Thriller', 'Thriller'),
                                ('Mystery', 'Mystery'),
+                               ('Comedy', 'Comedy'),
                               ), default = "Fantasy")
     thumbnail = models.FileField(upload_to='Movies_app/', null=True, blank=True)
     trailer = models.FileField(upload_to='Movies_app/trailers/', null=True, blank=True,storage=VideoMediaCloudinaryStorage(),

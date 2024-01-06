@@ -47,36 +47,36 @@ export default function MovieDescription() {
 
   return (
     <HomeLayout>
-      <div className="min-h-[90vh] px-4 pt-[70px] grid lg:grid-cols-3 sm:grid-cols-1 gap-8 px-2">
-        <div className="px-12 items-center flex flex-col gap-10  text-white lg:col-span-2 ">
+      <div className="grid min-h-[90vh] px-4 pt-[70px] lg:grid-cols-3 ">
+        <div className="flex flex-col items-center gap-10 px-12  text-white lg:col-span-2 ">
           <VideoPlayer trailer={trailer} thumbnail={thumbnail} />
           <button
-            className="bg-yellow-500 px-9 py-3 rounded-md flex text-center gap-1 justify-center align-middle text-white font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300 "
+            className="flex cursor-pointer justify-center gap-1 rounded-md bg-yellow-500 px-9 py-3 text-center align-middle text-lg font-semibold text-white transition-all duration-300 ease-in-out hover:bg-yellow-600  "
             onClick={handleDownload}
           >
             <div className="text-xl">Download</div>
-            <div className="mt-1 font-bold text-2xl">
+            <div className="mt-1 text-2xl font-bold">
               <AiOutlineDownload />
             </div>
           </button>
         </div>
-        <div className="mt-2">
+        <div className="mx-2 mt-8 lg:mx-0 lg:mt-2 ">
           <img
             src={thumbnail}
             alt={title}
-            className=" border border-opacity-75 shadow-md ring ring-white ring-opacity-75 ml-1 mb-5 "
+            className=" mb-5 ml-1 hidden border border-opacity-75  shadow-md ring ring-white ring-opacity-75 lg:block"
           />
-          <h1 className="text-5xl mb-3 text-yellow-500 font-normal  ">
+          <h1 className="mb-6 text-center text-5xl font-semibold  text-yellow-500  lg:mb-3 lg:text-left lg:font-normal ">
             {title}
           </h1>
           <p className="text-[16px]">{description}</p>
-          <div className="flex flex-row justify-between mt-4 mb-5 sm: flex-col gap-1.5 ">
+          <div className="mb-5 mt-4 flex flex-col justify-between gap-1.5 ">
             <p>
-              <span className="text-yellow-300 font-normal">Genre</span>
+              <span className="font-normal text-yellow-300">Genre</span>
               {` : ${genre}`}
             </p>
             <p>
-              <span className="text-yellow-300 font-normal">Duration</span>
+              <span className="font-normal text-yellow-300">Duration</span>
               {`: ${duration} min`}
             </p>
           </div>

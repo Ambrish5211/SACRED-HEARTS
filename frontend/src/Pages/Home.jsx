@@ -14,11 +14,11 @@ export default function Home() {
             backgroundImage: `url(${hero})`,
           }}
         >
-          <div className="w-1/2 flex items-center justify-center text-white mx-16 ">
+          <div className="mx-16 flex w-1/2 items-center justify-center pr-4 text-stone-200 ">
             <div>
-              <h1 className="text-5xl font-semibold mb-6">
+              <h1 className="mb-6 text-5xl font-semibold">
                 {" "}
-                <span className="text-yellow-500 font-bold mb-2">
+                <span className="mb-2 font-bold text-yellow-500">
                   <Typewriter
                     options={{
                       strings: ["Discover", "Download"],
@@ -29,20 +29,22 @@ export default function Home() {
                 </span>
                 BLOCKBUSTER
               </h1>
-              <p className="text-xl text-gray-200">
-                Unlock the Cinematic Universe: Stream, Download, and Dive into
+              <p className="text-xl text-gray-50">
                 Movie Magic Anytime, Anywhere—Your Ultimate Gateway to
                 Entertainment Delight!
               </p>
+              <p className="hidden text-xl text-gray-100 lg:block">
+                Unlock the Cinematic Universe: Stream, Download, and Dive into
+              </p>
 
-              <div className="space-x-6 mt-6">
+              <div className="mt-6 flex space-x-6">
                 <Link to="/movies">
-                  <button className="bg-yellow-500 px-5 py-3 rounded-md font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300">
+                  <button className="  cursor-pointer rounded-md bg-yellow-500 px-3  py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600 lg:px-5 lg:py-3 ">
                     Explore Movies
                   </button>
                 </Link>
                 <Link to="/contact">
-                  <button className="border border-yellow-500 px-5 py-3 rounded-md font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300">
+                  <button className="cursor-pointer rounded-md border border-yellow-500 px-5 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600">
                     Contact Us
                   </button>
                 </Link>
@@ -50,7 +52,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-1/2">{/* Additional content here */}</div>
+          <div className="lg:w-1/2">{/* Additional content here */}</div>
         </div>
       </HomeLayout>
     </>

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 
@@ -114,6 +114,7 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.parse("postgres://movies_downloader_user:yWfpbYtS03eXlt6gGhip3jU7vyHA6hf3@dpg-cmcmu0o21fec73csge7g-a.oregon-postgres.render.com/movies_downloader")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

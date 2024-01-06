@@ -16,29 +16,20 @@ export default function MovieDescription() {
 
   const handleDownload = async () => {
     try {
-      // Replace 'CLOUDINARY_VIDEO_URL' with your actual Cloudinary video URL
       const videoUrl = movie;
 
       const response = await fetch(videoUrl);
       const blob = await response.blob();
 
-      // Create a Blob URL for the video
       const blobUrl = window.URL.createObjectURL(blob);
 
-      // Create a link element
       const link = document.createElement("a");
-      // Set the href attribute with the Blob URL
       link.href = blobUrl;
-      // Specify the filename for the download
       link.download = title;
-      // Append the link to the document
       document.body.appendChild(link);
-      // Trigger a click on the link to start the download
       link.click();
-      // Remove the link from the document
       document.body.removeChild(link);
 
-      // Revoke the Blob URL to free up resources
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error("Error downloading video:", error);

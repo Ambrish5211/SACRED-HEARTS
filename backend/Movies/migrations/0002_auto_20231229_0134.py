@@ -25,10 +25,11 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='movies',
-            name='movie_id',
-            field=models.AutoField(default=1, primary_key=True, serialize=False),
-        ),
+    model_name='movies',
+    name='movie_id',
+    field=models.AutoField(primary_key=True, serialize=False),
+),
+
         migrations.AddField(
             model_name='movies',
             name='title',

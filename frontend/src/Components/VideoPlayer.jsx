@@ -1,6 +1,5 @@
 import React from "react";
 import ReactPlayer from "react-player";
-import HomeLayout from "../Layouts/HomeLayout";
 
 const VideoPlayer = ({ trailer, thumbnail }) => {
   const videoPlayerStyle = {

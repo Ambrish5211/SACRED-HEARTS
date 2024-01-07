@@ -80,6 +80,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -121,7 +122,7 @@ DATABASES = {
     }
 }
 
-database_url = os.environ.get("DATABASE_URL")
+database_url ="postgres://movies_downloader_user:yWfpbYtS03eXlt6gGhip3jU7vyHA6hf3@dpg-cmcmu0o21fec73csge7g-a.oregon-postgres.render.com/movies_downloader"
 DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
@@ -160,12 +161,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static"
-]
+STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static"
+# ]
 
 
 

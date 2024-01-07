@@ -49,13 +49,13 @@ function Signin() {
 
   return (
     <HomeLayout>
-      <div className="flex overflow-x-auto items-center justify-center h-[100vh]">
+      <div className="flex h-[100vh] items-center justify-center overflow-x-auto">
         <form
           onSubmit={onFormSubmit}
           noValidate
-          className="flex flex-col justify-center gap-3 rounded-lg p-4 text-white w-35"
+          className="w-35 flex flex-col justify-center gap-3 rounded-lg p-4 text-white"
         >
-          <h1 className="text-2xl text-center font-bold">Login Page</h1>
+          <h1 className="text-center text-2xl font-bold">Login Page</h1>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="font-semibold">
@@ -67,7 +67,7 @@ function Signin() {
               required
               type="text"
               name="email"
-              className="bg-transparent px-2 py-1 border"
+              className="border bg-transparent px-2 py-1"
               placeholder="enter your Email..."
               id="email"
             />
@@ -82,17 +82,17 @@ function Signin() {
               value={signinDetails.password}
               type="password"
               name="password"
-              className="bg-transparent px-2 py-1 border"
+              className="border bg-transparent px-2 py-1"
               placeholder="enter your Password..."
               id="password"
             />
           </div>
-          <button className="mt-2 bg-yellow-800 hover:bg-yellow-500 transition-all ease-in-out duration-300 cursor-pointer py-2 font-semibold text-lg">
+          <button className="mt-2 cursor-pointer bg-yellow-800 py-2 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-500">
             Sign In
           </button>
           <p className="text-center">
             Don&apos;t have an account ?{" "}
-            <Link to="/signup" className="cusror-pointer text-accent">
+            <Link to="/register" className="cusror-pointer text-accent">
               Register
             </Link>
           </p>

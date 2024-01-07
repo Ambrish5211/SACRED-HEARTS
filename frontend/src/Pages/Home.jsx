@@ -16,7 +16,7 @@ export default function Home() {
         >
           <div className="mx-16 flex w-1/2 items-center justify-center pr-4 text-stone-200 ">
             <div>
-              <h1 className="mb-6 text-5xl font-semibold">
+              <h1 className="mb-6 text-4xl font-semibold lg:text-5xl">
                 {" "}
                 <span className="mb-2 font-bold text-yellow-500">
                   <Typewriter
@@ -40,12 +40,12 @@ export default function Home() {
               <div className="mt-6 flex space-x-6">
                 <Link to="/movies">
                   <button className="  cursor-pointer rounded-md bg-yellow-500 px-3  py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600 lg:px-5 lg:py-3 ">
-                    Explore Movies
+                    <span className="hidden lg:block">Explore</span> Movies
                   </button>
                 </Link>
                 <Link to="/contact">
                   <button className="cursor-pointer rounded-md border border-yellow-500 px-5 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600">
-                    Contact Us
+                    Contact <span className="hidden lg:block">Us</span>
                   </button>
                 </Link>
               </div>

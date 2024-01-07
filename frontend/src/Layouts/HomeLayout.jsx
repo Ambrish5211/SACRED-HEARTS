@@ -42,14 +42,14 @@ function HomeLayout({ children }) {
             <FiMenu
               onClick={changeWidth}
               size={"32px"}
-              className="font-bold text-gray m-4 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              className="text-gray m-4 transform cursor-pointer font-bold transition duration-300 ease-in-out hover:scale-105"
             />
           </label>
         </div>
         <div className="drawer-side w-0">
           <label htmlFor="my-drawer" className="drawer-overlay"></label>
-          <ul className="menu p-4 w-48 h-[100%] sm:w-80 bg-base-200 text-base-content relative">
-            <li className="w-fit absolute right-2 z-50">
+          <ul className="menu relative h-[100%] w-48 bg-base-200 p-4 text-base-content sm:w-80">
+            <li className="absolute right-2 z-50 w-fit">
               <button onClick={hideDrawer}>
                 <AiFillCloseCircle size={24} />
               </button>
@@ -69,27 +69,29 @@ function HomeLayout({ children }) {
 
             {!isLoggedIn ? (
               <li className="absolute bottom-4 w-[90%]">
-                <div className="w-full flex items-center justify-center">
-                  <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full bg-red-600 ">
+                <div className="flex w-full items-center justify-center">
+                  <button className="btn-primary w-full rounded-md bg-red-600 px-4 py-1 font-semibold ">
                     <Link to="/login">Login</Link>
                   </button>
-                  <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full bg-blue-800">
+                  <button className="btn-secondary w-full rounded-md bg-blue-800 px-4 py-1 font-semibold">
                     <Link to="/register">Signup</Link>
                   </button>
                 </div>
               </li>
             ) : (
               <li className="absolute bottom-4 w-[90%]">
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   {isAdmin ? (
-                    <button className="btn-primary px-4 py-1 font-semibold rounded-md w-full  bg-red-600">
-                      <Link to="http://127.0.0.1:8000/admin">Admin</Link>
+                    <button className="btn-primary w-full rounded-md bg-red-600 px-4 py-1  font-semibold">
+                      <Link to="https://movie-downloader-backend.onrender.com/admin">
+                        Admin
+                      </Link>
                     </button>
                   ) : (
                     ""
                   )}
 
-                  <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full  bg-blue-800">
+                  <button className="btn-secondary w-full rounded-md bg-blue-800 px-4 py-1  font-semibold">
                     <Link onClick={onLogout}>Logout</Link>
                   </button>
                 </div>

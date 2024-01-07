@@ -30,4 +30,3 @@ class UserModelAdmin(BaseUserAdmin):
 admin.site.register(User, UserModelAdmin)   
 
 
-#password = admin

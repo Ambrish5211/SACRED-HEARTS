@@ -14,16 +14,16 @@ export const getAllMovies = createAsyncThunk(
       const response = axiosInstance.get("/movies/", data);
       console.log(response);
       toast.promise(response, {
-        loading: "Wait! Fetching all courses",
+        loading: "Wait! Fetching all movies",
         success: "Success",
-        error: "Failed to load your courses",
+        error: "Failed to load your movies",
       });
       return (await response).data;
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
     }
-  }
+  },
 );
 
 const movieSlice = createSlice({

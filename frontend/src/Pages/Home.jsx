@@ -40,12 +40,13 @@ export default function Home() {
               <div className="mt-6 flex space-x-6">
                 <Link to="/movies">
                   <button className="  cursor-pointer rounded-md bg-yellow-500 px-3  py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600 lg:px-5 lg:py-3 ">
-                    <span className="hidden lg:block">Explore</span> Movies
+                    <span className=" hidden lg:inline-block">Explore</span>{" "}
+                    Movies
                   </button>
                 </Link>
                 <Link to="/contact">
                   <button className="cursor-pointer rounded-md border border-yellow-500 px-5 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600">
-                    Contact <span className="hidden lg:block">Us</span>
+                    Contact <span className="hidden lg:inline-block">Us</span>
                   </button>
                 </Link>
               </div>

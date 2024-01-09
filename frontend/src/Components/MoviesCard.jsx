@@ -5,17 +5,19 @@ function MoviesCard({ data }) {
 
   return (
     <div
-      onClick={() => navigate("/movies/description", { state: { ...data } })}
-      className="text-white w-[22rem] h-[430px] shadow-lg rounded-lg cursor-pointer group overflow-hidden bg-zinc-700 transform transition-transform ease-in-out hover:scale-105 "
+      onClick={() =>
+        navigate(`/movies/description/${data.title}`, { state: { ...data } })
+      }
+      className="group h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
     >
       <div className="overflow-hidden">
         <img
           alt="Course thumbnail"
           src={data?.thumbnail}
-          className="h-48 w-full rounded-tl-lg rounded-tr-lg group:hover:scale=[1,2] transition-all ease-in-out duration-300"
+          className="group:hover:scale=[1,2] h-48 w-full rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
         />
-        <div className="p-3 space-y-3 text-white ">
-          <h2 className="text-cl font-bold  text-yellow-500 line-clamp-2 text-center text-xl ">
+        <div className="space-y-3 p-3 text-white ">
+          <h2 className="text-cl line-clamp-2  text-center text-xl font-bold text-yellow-500 ">
             {data?.title}
           </h2>
           <p className="line-clamp-2">{data?.description}</p>

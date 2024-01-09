@@ -18,7 +18,7 @@ function App() {
       <Route path="/register" element={<Register />}></Route>
       <Route element={<RequireAuth />}>
         <Route
-          path="/movies/description"
+          path="/movies/description/:title"
           element={<MovieDescription />}
         ></Route>
       </Route>

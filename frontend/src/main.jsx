@@ -13,7 +13,7 @@ import Home from "./Pages/Home.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <BrowserRouter>
-      {/* <App /> */}
+      <App />
       <Home />
       <Toaster />
     </BrowserRouter>

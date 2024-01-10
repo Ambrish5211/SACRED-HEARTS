@@ -34,8 +34,8 @@ function HomeLayout({ children }) {
   }
 
   return (
-    <div className="min-h-[65-vh]">
-      <div className="drawer absolute left-0 z-50 w-full">
+    <div className="min-h-screen">
+      <div className="drawer absolute  left-0 z-50 w-full">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           <label htmlFor="my-drawer">
@@ -102,8 +102,6 @@ function HomeLayout({ children }) {
       </div>
 
       {children}
-
-      <Footer />
     </div>
   );
 }

@@ -5,6 +5,9 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import hero from "../assets/hero-bg.jpg";
 import hero2 from "../assets/top-rated-bg.jpg";
 import hero3 from "../assets/cta-bg.jpg";
+import bossbabyImg from "../assets/the-boss-baby.jpg";
+import interstellarImg from "../assets/interstellar.jpg";
+import hobbitImg from "../assets/hobbit.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -80,7 +83,7 @@ export default function Home() {
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
                   alt="Interstellar"
-                  src={"../../src/assets/interstellar.jpg"}
+                  src={interstellarImg}
                   className="group:hover:scale=[1,2]  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
                 <div className="space-y-3 p-3 text-white ">
@@ -110,7 +113,7 @@ export default function Home() {
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
                   alt="thebossbaby"
-                  src={"../../src/assets/the-boss-baby.jpg"}
+                  src={bossbabyImg}
                   className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
                 <div className="space-y-3 p-3 text-white ">
@@ -140,7 +143,7 @@ export default function Home() {
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
                   alt="thehobbit"
-                  src={"../../src/assets/hobbit.jpg"}
+                  src={hobbitImg}
                   className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
                 <div className="space-y-3 p-3 text-white ">

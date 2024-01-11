@@ -97,14 +97,14 @@ export default function Home() {
                       Christopher Nolan
                     </span>
                   </p>
-                  <p className="font-semibold">
+                  <p className=" font-semibold sm:inline-block">
                     Duration:
-                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                    <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
                       2h 49min
                     </span>
                   </p>
-                  <p className="hidden font-semibold sm:inline-block">
+                  <p className=" font-semibold ">
                     Genre:
                     <span className="font-bold text-yellow-500"> SCiFI</span>
                   </p>
@@ -130,9 +130,9 @@ export default function Home() {
                       Tom McGrath
                     </span>
                   </p>
-                  <p className="hidden font-semibold sm:inline-block">
+                  <p className=" font-semibold sm:inline-block">
                     Duration:
-                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                    <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
                       1h 39min
                     </span>
@@ -163,9 +163,9 @@ export default function Home() {
                       Peter Jackson
                     </span>
                   </p>
-                  <p className="hidden font-semibold sm:inline-block">
+                  <p className=" font-semibold sm:inline-block">
                     Duration:
-                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                    <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
                       2h 38min
                     </span>

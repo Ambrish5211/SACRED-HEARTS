@@ -178,24 +178,25 @@ export default function Home() {
             backgroundSize: "cover",
           }}
         >
-          <div className="mx-auto grid max-w-7xl  py-12 sm:grid-cols-2">
+          <div className="mx-auto grid max-w-7xl gap-6 py-12 sm:grid-cols-2 sm:gap-0">
             <div className="flex items-start justify-center sm:flex-col">
-              <h1 className="text-2xl font-extrabold uppercase text-stone-800 sm:text-3xl">
+              <h1 className="text-xl font-bold uppercase text-stone-800 sm:text-3xl sm:font-extrabold">
                 NEVER MISS AN UPDATE FROM US.
               </h1>
-              <h2 className="mt-1 font-semibold text-black">
+              <h2 className="mt-1 hidden font-semibold text-black sm:block">
                 Enter your email to get started with us.
               </h2>
             </div>
             <div className="flex items-center justify-center">
-              <div className="relative">
+              <div className="sm:relative ">
                 <input
                   placeholder="Enter your email..."
                   type="email"
-                  className="h-12 w-[28rem] rounded-md bg-white px-4 font-semibold text-slate-800 shadow-md "
+                  className="h-8 w-[14rem] rounded-md bg-white px-4 font-semibold text-slate-800 shadow-md sm:h-12 sm:w-[28rem] "
                 />
-                <button className="absolute right-0 h-12  w-24 rounded-md bg-black text-xs font-bold text-yellow-400 transition ease-in-out hover:bg-yellow-500 hover:text-white">
-                  GET STARTED
+                <button className="sm:bold right-0 ml-2 h-8 w-16 rounded-md bg-black p-2 text-xs font-semibold text-yellow-400 transition ease-in-out hover:bg-yellow-500 hover:text-white sm:absolute sm:ml-0 sm:h-12 sm:w-24">
+                  <span className="hidden sm:block">GET STARTED</span>
+                  <span className="sm:hidden">Subscribe</span>
                 </button>
               </div>
             </div>

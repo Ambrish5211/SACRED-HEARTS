@@ -79,7 +79,7 @@ export default function Home() {
 
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
-                  alt="Course thumbnail"
+                  alt="Interstellar"
                   src={"../../src/assets/interstellar.jpg"}
                   className="group:hover:scale=[1,2]  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
@@ -109,7 +109,7 @@ export default function Home() {
 
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
-                  alt="Course thumbnail"
+                  alt="thebossbaby"
                   src={"../../src/assets/the-boss-baby.jpg"}
                   className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
@@ -139,7 +139,7 @@ export default function Home() {
 
               <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
                 <img
-                  alt="Course thumbnail"
+                  alt="thehobbit"
                   src={"../../src/assets/hobbit.jpg"}
                   className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />

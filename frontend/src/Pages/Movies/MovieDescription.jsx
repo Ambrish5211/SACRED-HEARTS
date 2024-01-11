@@ -38,7 +38,7 @@ export default function MovieDescription() {
 
   return (
     <HomeLayout>
-      <div className="grid min-h-[90vh] px-4 pt-[70px] lg:grid-cols-3 ">
+      <div className="grid min-h-[100vh] px-4 pt-[70px] lg:grid-cols-3 ">
         <div className="flex flex-col items-center gap-10 px-4 text-white lg:col-span-2 lg:px-12 ">
           <VideoPlayer trailer={trailer} thumbnail={thumbnail} />
           <button

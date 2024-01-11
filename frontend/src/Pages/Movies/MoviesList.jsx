@@ -19,12 +19,12 @@ function MoviesList() {
 
   return (
     <HomeLayout>
-      <div className="flex min-h-[90vh] w-full flex-col gap-10 px-10 pr-2 pt-12 text-white lg:px-12">
+      <div className="flex min-h-screen w-full flex-col gap-10 px-10  pt-[4rem] text-white ">
         <h1 className="mb-5 text-center text-4xl font-semibold">
           Top Rated
           <span className="font-bold text-yellow-500"> Movies</span>
         </h1>
-        <div className="mb-10 flex flex-wrap justify-between gap-16 px-6 lg:px-12">
+        <div className="mb-10 flex flex-wrap justify-between gap-16 px-6 sm:px-12">
           {movieList?.map((element) => {
             return <MoviesCard key={element.movie_id} data={element} />;
           })}

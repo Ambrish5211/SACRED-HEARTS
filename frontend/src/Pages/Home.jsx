@@ -3,6 +3,8 @@ import Typewriter from "typewriter-effect";
 import HomeLayout from "../Layouts/HomeLayout";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import hero from "../assets/hero-bg.jpg";
+import hero2 from "../assets/top-rated-bg.jpg";
+import hero3 from "../assets/cta-bg.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -56,7 +58,13 @@ export default function Home() {
           </section>
         </main>
 
-        <main className="max-w-screen">
+        <main
+          className="max-w-screen"
+          style={{
+            backgroundImage: `url(${hero2})`,
+            backgroundSize: "cover",
+          }}
+        >
           <section className="max-w-7.2xl mx-auto p-12">
             <div className="text-center">
               <p className="mb-3 mt-9 text-xs font-semibold text-yellow-500">
@@ -161,6 +169,37 @@ export default function Home() {
               </div>
             </div>
           </section>
+        </main>
+
+        <main
+          className="max-w-screen"
+          style={{
+            backgroundImage: `url(${hero3})`,
+            backgroundSize: "cover",
+          }}
+        >
+          <div className="mx-auto grid max-w-7xl  py-12 sm:grid-cols-2">
+            <div className="flex items-start justify-center sm:flex-col">
+              <h1 className="text-2xl font-extrabold uppercase text-stone-800 sm:text-3xl">
+                NEVER MISS AN UPDATE FROM US.
+              </h1>
+              <h2 className="mt-1 font-semibold text-black">
+                Enter your email to get started with us.
+              </h2>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="relative">
+                <input
+                  placeholder="Enter your email..."
+                  type="email"
+                  className="h-12 w-[28rem] rounded-md bg-white px-4 font-semibold text-slate-800 shadow-md "
+                />
+                <button className="absolute right-0 h-12  w-24 rounded-md bg-black text-xs font-bold text-yellow-400 transition ease-in-out hover:bg-yellow-500 hover:text-white">
+                  GET STARTED
+                </button>
+              </div>
+            </div>
+          </div>
         </main>
       </HomeLayout>
     </>

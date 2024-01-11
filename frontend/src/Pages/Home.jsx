@@ -84,7 +84,7 @@ export default function Home() {
                 <img
                   alt="Interstellar"
                   src={interstellarImg}
-                  className="group:hover:scale=[1,2]  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
+                  className="group:hover:scale=[1,2] h-64 w-full rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
                 />
                 <div className="space-y-3 p-3 text-white ">
                   <h2 className=" line-clamp-2 text-center text-2xl font-bold uppercase text-yellow-500 ">
@@ -99,9 +99,12 @@ export default function Home() {
                   </p>
                   <p className="font-semibold">
                     Duration:
-                    <span className="font-bold text-yellow-500"> 2h 49min</span>
+                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                      {" "}
+                      2h 49min
+                    </span>
                   </p>
-                  <p className="font-semibold">
+                  <p className="hidden font-semibold sm:inline-block">
                     Genre:
                     <span className="font-bold text-yellow-500"> SCiFI</span>
                   </p>
@@ -127,11 +130,14 @@ export default function Home() {
                       Tom McGrath
                     </span>
                   </p>
-                  <p className="font-semibold">
+                  <p className="hidden font-semibold sm:inline-block">
                     Duration:
-                    <span className="font-bold text-yellow-500"> 1h 39min</span>
+                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                      {" "}
+                      1h 39min
+                    </span>
                   </p>
-                  <p className="font-semibold">
+                  <p className=" font-semibold">
                     Genre:
                     <span className="font-bold text-yellow-500"> Comedy</span>
                   </p>
@@ -157,9 +163,12 @@ export default function Home() {
                       Peter Jackson
                     </span>
                   </p>
-                  <p className="font-semibold">
+                  <p className="hidden font-semibold sm:inline-block">
                     Duration:
-                    <span className="font-bold text-yellow-500"> 2h 38min</span>
+                    <span className="hidden font-bold text-yellow-500 sm:inline-block">
+                      {" "}
+                      2h 38min
+                    </span>
                   </p>
                   <p className="font-semibold">
                     Genre:

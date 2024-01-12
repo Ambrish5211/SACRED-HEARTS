@@ -38,8 +38,8 @@ export default function MovieDescription() {
 
   return (
     <HomeLayout>
-      <div className="grid min-h-[100vh] px-4 pt-[70px] lg:grid-cols-3 ">
-        <div className="flex flex-col items-center gap-10 px-4 text-white lg:col-span-2 lg:px-12 ">
+      <div className="grid min-h-[100vh] w-full  pt-[70px] sm:pt-[70px] md:grid-cols-3 ">
+        <div className="flex flex-col items-center gap-10 text-white md:col-span-2 md:px-12 ">
           <VideoPlayer trailer={trailer} thumbnail={thumbnail} />
           <button
             className="flex cursor-pointer justify-center gap-1 rounded-md bg-yellow-500 px-9 py-3 text-center align-middle text-lg font-semibold text-white transition-all duration-300 ease-in-out hover:bg-yellow-600  "
@@ -51,17 +51,17 @@ export default function MovieDescription() {
             </div>
           </button>
         </div>
-        <div className="mx-2 mt-8 lg:mx-0 lg:mt-2 ">
+        <div className="mx-2 mt-8 pr-2 md:mx-0 md:mt-2 ">
           <img
             src={thumbnail}
             alt={title}
-            className=" mb-5 ml-1 hidden h-64 max-h-full  w-full border border-opacity-75 shadow-md ring ring-white ring-opacity-75 lg:block"
+            className=" mb-5  hidden h-64 max-h-full  w-full border border-opacity-75 shadow-md ring ring-white ring-opacity-75 lg:block"
           />
           <h1 className="mb-6 text-center text-5xl font-semibold  text-yellow-500  lg:mb-3 lg:text-left lg:font-normal ">
             {title}
           </h1>
-          <p className="text-[16px]">{description}</p>
-          <div className="mb-5 mt-4 flex flex-col justify-between gap-1.5 ">
+          <p className="px-2 text-[16px] sm:px-0">{description}</p>
+          <div className="mb-5 mt-4 flex flex-col   justify-between gap-1.5 px-2 sm:px-0 ">
             <p>
               <span className="font-normal text-yellow-300">Genre</span>
               {` : ${genre}`}

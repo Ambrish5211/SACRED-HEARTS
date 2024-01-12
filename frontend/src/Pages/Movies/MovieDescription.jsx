@@ -39,7 +39,7 @@ export default function MovieDescription() {
   return (
     <HomeLayout>
       <div className="grid min-h-[100vh] w-full  pt-[70px] sm:pt-[70px] md:grid-cols-3 ">
-        <div className="flex flex-col items-center gap-10 text-white md:col-span-2 md:px-12 ">
+        <div className="flex flex-col items-center gap-10 px-2 text-white md:col-span-2 md:px-12 ">
           <VideoPlayer trailer={trailer} thumbnail={thumbnail} />
           <button
             className="flex cursor-pointer justify-center gap-1 rounded-md bg-yellow-500 px-9 py-3 text-center align-middle text-lg font-semibold text-white transition-all duration-300 ease-in-out hover:bg-yellow-600  "

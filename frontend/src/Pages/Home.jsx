@@ -80,7 +80,10 @@ export default function Home() {
             <div className="my-12 flex flex-wrap  items-center justify-between gap-8 sm:px-10 ">
               {/* FIRST MOVIE */}
 
-              <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
+              <div
+                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
+                onClick={() => navigate(`/movies`)}
+              >
                 <img
                   alt="Interstellar"
                   src={interstellarImg}
@@ -113,7 +116,10 @@ export default function Home() {
 
               {/* SECOND MOVIE */}
 
-              <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
+              <div
+                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
+                onClick={() => navigate(`/movies`)}
+              >
                 <img
                   alt="thebossbaby"
                   src={bossbabyImg}
@@ -146,7 +152,10 @@ export default function Home() {
 
               {/* THIRD  MOVIE */}
 
-              <div className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 ">
+              <div
+                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
+                onClick={() => navigate(`/movies`)}
+              >
                 <img
                   alt="thehobbit"
                   src={hobbitImg}

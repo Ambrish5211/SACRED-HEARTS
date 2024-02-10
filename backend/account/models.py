@@ -1,14 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 
-#  Custom User Manager
+
 
 
 class UserManager(BaseUserManager):
   def create_user(self, email, username, password=None):
-      """
-      Creates and saves a User with the given email, name,  password.
-      """
+      
       if not email:
           raise ValueError('User must have an email address')
 
@@ -22,9 +20,7 @@ class UserManager(BaseUserManager):
       return user
 
   def create_superuser(self, email, username,password=None):
-      """
-      Creates and saves a superuser with the given email, name, and password.
-      """
+      
       user = self.create_user(
           email,
           password=password,
@@ -34,7 +30,6 @@ class UserManager(BaseUserManager):
       user.save(using=self._db)
       return user
 
-#  Custom User Model
 class User(AbstractBaseUser):
   email = models.EmailField(
       verbose_name='Email',
@@ -57,12 +52,10 @@ class User(AbstractBaseUser):
 
   def has_perm(self, perm, obj=None):
       "Does the user have a specific permission?"
-      # Simplest possible answer: Yes, always
       return self.is_admin
 
   def has_module_perms(self, app_label):
       "Does the user have permissions to view the app `app_label`?"
-      # Simplest possible answer: Yes, always
       return True
 
   @property

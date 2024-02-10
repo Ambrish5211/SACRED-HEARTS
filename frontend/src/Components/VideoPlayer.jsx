@@ -13,6 +13,7 @@ const VideoPlayer = ({ trailer, thumbnail }) => {
       url={trailer}
       controls={true}
       light={thumbnail}
+      playing={true}
       style={videoPlayerStyle}
       width="100%"
       height="80%"

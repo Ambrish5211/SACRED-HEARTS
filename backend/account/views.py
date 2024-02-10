@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from account.renderers import UserRenderer
 
-# Generate Token Manually
+
 def get_tokens_for_user(user):
   refresh = RefreshToken.for_user(user)
   return {

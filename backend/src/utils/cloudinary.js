@@ -12,7 +12,7 @@ const uploadOnCloudinary = async (localfilepath) => {
     if (!localfilepath) return null;
     const response = await cloudinary.uploader.upload(localfilepath, {
       resource_type: "auto",
-      folder: "videotube"
+      folder: "moviesStreaming"
     });
     fs.unlinkSync(localfilepath)
     // console.log("File is uploaded on cloudinary", response.url);

@@ -13,8 +13,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // remove password and refrest token field from response
   // check for user creation
   // return res
-
-  const {  email, username, password } = req.body;
+console.log(req.body)
+  const { email, username, password } = req.body;
+  console.log(email);
 
   if (
     [ email, username, password].some((field) => field?.trim() === "")
@@ -34,10 +35,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
   
   const user = await User.create({ 
-    
     email,
     password,
-    username: username.toLowerCase()  
+    username,
   })
 
   const createdUser = await User.findById(user._id).select(
@@ -56,6 +56,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const {email, password} = req.body;
+  console.log(email)
 
   if (
     [email, password].some((field) => field?.trim() === "")
@@ -64,7 +65,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const existedUser = await User.findOne({
-    $or: [{ email, username }],
+    $or: [{ email }],
   });
 
   if (!existedUser) {

@@ -31,4 +31,4 @@ const movieSchema = new Schema(
 );
 
 
-export const Movie = moongose.Model("Movie", movieSchema);
+export const Movie = mongoose.model("Movie", movieSchema);

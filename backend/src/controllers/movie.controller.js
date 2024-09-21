@@ -1,8 +1,8 @@
-import { Movie } from "../models/movie.model";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiRessponse";
-import { asyncHandler } from "../utils/asyncHandler";
-import { uploadOnCloudinary } from "../utils/Cloudinary";
+import { Movie } from "../models/movie.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiRessponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 //TODO FOR LATER
 
@@ -25,9 +25,9 @@ const moviesList = asyncHandler(async (req, res) => {
 
 const addMovie = asyncHandler(async (req, res) => {
     try {
-
+        // todo - set duration in db, debug
         const {  title, description, genre } = req.body;
-
+        console.log(title)
         if (
             [ title, description, genre].some((field) => field?.trim() === "")
           ) {
@@ -35,7 +35,7 @@ const addMovie = asyncHandler(async (req, res) => {
           }
 
         const thumbnailPath = req.files?.thumbnail[0]?.path;
-        const moviePath = req.files?.movie[0]?.path;
+        const moviePath = req.files?.videoFile[0]?.path;
 
         if(!thumbnailPath) {
             throw new ApiError(400, "Thumbnail is required")

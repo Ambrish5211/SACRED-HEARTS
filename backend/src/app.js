@@ -19,7 +19,9 @@ app.use(cookieParser());
 // Routes Import
 
 import userRouter from "./routes/user.routes.js";
+import movieRouter from "./routes/movies.routes.js"
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/movies", movieRouter)
 
 export { app };

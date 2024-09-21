@@ -32,9 +32,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // remove password and refrest token field from response
   // check for user creation
   // return res
-console.log(req.body)
+
   const { email, username, password } = req.body;
-  console.log(email);
+
 
   if (
     [ email, username, password].some((field) => field?.trim() === "")

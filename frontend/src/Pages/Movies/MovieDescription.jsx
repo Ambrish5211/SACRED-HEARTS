@@ -6,13 +6,13 @@ import { AiOutlineDownload } from "react-icons/ai";
 
 export default function MovieDescription() {
   const { state } = useLocation();
-  const trailer = `${state.trailer}?f_auto=mp4`;
-  const movie = `${state.sample_video}?f_auto=mp4`;
+  const trailer = `${state.videoFile}?f_auto=mp4`;
+  const movie = `${state.videoFile}?f_auto=mp4`;
   const thumbnail = state.thumbnail;
   const title = state.title;
   const description = state.description;
-  const duration = state.duration_minutes;
-  const genre = state.genres;
+  const duration = Math.round(state.duration);
+  const genre = state.genre.toUpperCase();
 
   const handleDownload = async () => {
     try {

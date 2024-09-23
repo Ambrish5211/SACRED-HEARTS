@@ -8,6 +8,7 @@ function MoviesList() {
   const dispatch = useDispatch();
 
   const { movieList } = useSelector((state) => state.movie);
+  console.log(movieList)
 
   async function loadMovies() {
     await dispatch(getAllMovies());
@@ -26,7 +27,7 @@ function MoviesList() {
         </h1>
         <div className="mb-10 flex flex-wrap justify-between gap-16 px-6 sm:px-12">
           {movieList?.map((element) => {
-            return <MoviesCard key={element.movie_id} data={element} />;
+            return <MoviesCard key={element._id} data={element} />;
           })}
         </div>
       </div>

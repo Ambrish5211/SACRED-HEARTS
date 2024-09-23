@@ -16,7 +16,7 @@ router.route("/addMovie").post( upload.fields([
     },
     
 ]),addMovie);
-router.route("/movie-description").get(movieDescription);   
+router.route("/movie-description/:videoId").get(movieDescription);   
 
 
 export default router;

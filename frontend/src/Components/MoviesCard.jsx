@@ -26,12 +26,12 @@ function MoviesCard({ data }) {
             Duration:
             <span className="font-bold text-yellow-500">
               {" "}
-              {data?.duration_minutes} min
+              {data?.duration.toFixed(2)} min
             </span>
           </p>
           <p className="font-semibold uppercase">
             Genre:
-            <span className="font-bold text-yellow-500"> {data?.genres}</span>
+            <span className="font-bold text-yellow-500"> {data?.genre}</span>
           </p>
           <p className="font-semibold  uppercase">
             Release_Date:

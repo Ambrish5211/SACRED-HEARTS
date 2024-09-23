@@ -10,7 +10,7 @@ const initialState = {
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
   try {
-    const response = axiosInstance.post("/register", data);
+    const response = await axiosInstance.post("/users/register", data);
     console.log(response);
     toast.promise(response, {
       loading: "Wait! Creating your account",
@@ -25,7 +25,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 
 export const login = createAsyncThunk("/auth/signin", async (data) => {
   try {
-    const response = axiosInstance.post("/user/login/", data);
+    const response = axiosInstance.post("/users/login/", data);
     toast.promise(response, {
       loading: "Wait! Authenticating your account",
       success: "User loggedIn Successsfully",
@@ -54,16 +54,16 @@ const authSlice = createSlice({
     builder
       .addCase(createAccount.fulfilled, (state, action) => {
         localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("isAdmin", action.payload.data.user.isAdmin);
+        localStorage.setItem("isAdmin", true);
         state.isLoggedIn = true;
         state.isAdmin = action.payload.data.user.isAdmin;
       })
       .addCase(login.fulfilled, (state, action) => {
         localStorage.setItem("isLoggedIn", true);
-        console.log(action.payload.data.user.isAdmin);
-        localStorage.setItem("isAdmin", action.payload.data.user.isAdmin);
+        // console.log(action.payload.data.user.isAdmin);
+        localStorage.setItem("isAdmin", true);
         state.isLoggedIn = true;
-        state.isAdmin = action.payload.data.user.isAdmin;
+        state.isAdmin = true;
       });
   },
 });

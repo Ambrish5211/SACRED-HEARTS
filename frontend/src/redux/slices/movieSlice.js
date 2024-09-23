@@ -11,7 +11,7 @@ export const getAllMovies = createAsyncThunk(
   "/movies/getAllMovies",
   async (data) => {
     try {
-      const response = axiosInstance.get("/movies/", data);
+      const response =  axiosInstance.get("/movies/movieList", data);
       console.log(response);
       toast.promise(response, {
         loading: "Wait! Fetching all movies",
@@ -32,9 +32,9 @@ const movieSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllMovies.fulfilled, (state, action) => {
-      console.log(action.payload);
-      if (action?.payload) {
-        state.movieList = [...action.payload];
+      console.log(action.payload.data);
+      if (true) {
+        state.movieList = [...action.payload.data.moviesList];
       }
     });
   },

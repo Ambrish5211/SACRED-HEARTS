@@ -80,7 +80,7 @@ const addMovie = asyncHandler(async (req, res) => {
 
 const movieDescription = asyncHandler(async (req, res) => {
         try {
-            const movieId = req.params.id;
+            const movieId = req.params.videoId;
     
             const movie  = await Movie.findById(movieId);
     
@@ -95,7 +95,7 @@ const movieDescription = asyncHandler(async (req, res) => {
                 }, "Movie fetched Successfully")
             );
         } catch (error) {
-            throw new ApiError(500, "Something went wrong while fetching the movie");
+            throw new ApiError(500, `Something went wrong while fetching the movie ${error}`);
         }
 });
 

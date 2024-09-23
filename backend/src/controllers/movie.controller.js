@@ -25,9 +25,7 @@ const moviesList = asyncHandler(async (req, res) => {
 
 const addMovie = asyncHandler(async (req, res) => {
     try {
-        // todo - set duration in db, debug
         const {  title, description, genre } = req.body;
-        console.log(title)
         if (
             [ title, description, genre].some((field) => field?.trim() === "")
           ) {
@@ -51,14 +49,18 @@ const addMovie = asyncHandler(async (req, res) => {
         if (!thumbnail || !movieUpload) {
             throw new ApiError(400, "Failed to upload files to Cloudinary");
           }
+
+
+        const durationInMinutes = (movieUpload.duration) / 60;
       
 
         const movie = await Movie.create({
             title,
             thumbnail: thumbnail.url,
-            moviepath: movieUpload.url ,
+            videoFile: movieUpload.url ,
             description, 
             genre,
+            duration: durationInMinutes,
             
         })
 
@@ -72,7 +74,7 @@ const addMovie = asyncHandler(async (req, res) => {
 
         
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while adding the movie")
+        throw new ApiError(500, `Something went wrong while adding the movie ${error}`)
     }
 })
 

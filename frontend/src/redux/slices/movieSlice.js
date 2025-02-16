@@ -32,7 +32,7 @@ const movieSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllMovies.fulfilled, (state, action) => {
-      console.log(action.payload.data);
+      console.log(action.payload);
       if (true) {
         state.movieList = [...action.payload.data.moviesList];
       }

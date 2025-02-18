@@ -55,9 +55,9 @@ const authSlice = createSlice({
         // console.log(action)
         localStorage.setItem("isLoggedIn", true);
         
-        localStorage.setItem("isAdmin", action.payload.data.user.isAdmin);
+        localStorage.setItem("isAdmin", action.payload.data.data.isAdmin);
         state.isLoggedIn = true;
-        state.isAdmin = action.payload.data.user.isAdmin;
+        state.isAdmin = action.payload.data.data.isAdmin;
       })
       .addCase(login.fulfilled, (state, action) => {
         localStorage.setItem("isLoggedIn", true);

@@ -12,7 +12,6 @@ import Contact from "./Pages/Contact";
 
 function App() {
   const { user } = useAuth0();
-  console.log(user);
   return (
     <Routes>
       <Route path="/" element={<Home />}></Route>

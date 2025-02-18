@@ -56,7 +56,7 @@ function Register() {
     formData.append("email", signupDetails.email);
     formData.append("password", signupDetails.password);
 
-    const response = await dispatch(createAccount(formData));
+    const response = await dispatch(createAccount(signupDetails));
     if (response?.payload?.data) {
       navigate("/");
     }

@@ -8,7 +8,7 @@ function MoviesList() {
   const dispatch = useDispatch();
 
   const { movieList } = useSelector((state) => state.movie);
-  console.log(movieList)
+  
 
   async function loadMovies() {
     await dispatch(getAllMovies());

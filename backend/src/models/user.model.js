@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
     refreshToken: {
       type: String,
     },
@@ -41,12 +45,13 @@ UserSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 UserSchema.methods.generateAccessToken = function () {
+  console.log(this)
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       username: this.username,
-      fullname: this.fullname,
+      
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

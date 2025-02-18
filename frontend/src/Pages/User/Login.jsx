@@ -26,7 +26,6 @@ function Signin() {
 
   async function onFormSubmit(e) {
     e.preventDefault();
-    console.log(signinDetails);
     if (!signinDetails.email || !signinDetails.password) {
       toast.error("Please fill all the details");
       return;
@@ -35,7 +34,7 @@ function Signin() {
       toast.error("Invalid email provided");
       return;
     }
-    console.log(signinDetails);
+  
 
     const response = await dispatch(login(signinDetails));
     if (response?.payload?.data) {

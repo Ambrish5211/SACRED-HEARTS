@@ -29,8 +29,8 @@ function HomeLayout({ children }) {
   async function onLogout(e) {
     e.preventDefault();
 
-    dispatch(logoutSuccess());
-    if (response?.payload?.data) navigate("/");
+    const response =  await dispatch(logoutSuccess());
+    if (response) navigate("/");
   }
 
   return (

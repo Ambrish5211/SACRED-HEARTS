@@ -6,12 +6,16 @@ import { ApiResponse } from "../utils/ApiRessponse.js";
 
 const generateAccessAndRefreshTokens = async(userId) =>{
   try {
-      const user = await User.findById('66eb51eb6d9ab265408bcffd')
+      const user = await User.findById(userId)
+      
+      
       const accessToken = user.generateAccessToken()
+      
       const refreshToken = user.generateRefreshToken()
+      
 
       user.refreshToken = refreshToken
-      console.log(refreshToken)
+    
       await user.save({ validateBeforeSave: false })
 
       return {accessToken, refreshToken}
@@ -97,10 +101,9 @@ const loginUser = asyncHandler(async (req, res) => {
   {
     throw new ApiError(401, "Invalid User Credentials")
   }
-  console.log(user)
+
 
   const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
-
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = {

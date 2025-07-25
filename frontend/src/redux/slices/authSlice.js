@@ -4,8 +4,8 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../config/axiosInstance";
 
 const initialState = {
-  isLoggedIn: localStorage.getItem("isLoggedIn") === "true" ? true : false,
-  isAdmin: localStorage.getItem("isAdmin") === "true" ? true : false,
+  isLoggedIn:  false,
+  isAdmin: false,
 };
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
@@ -41,27 +41,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logoutSuccess: (state) => {
-      // Reset isLoggedIn state to false
+      
       state.isLoggedIn = false;
       state.isAdmin = false;
-      // Clear the value from local storage
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("isAdmin");
+      
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createAccount.fulfilled, (state, action) => {
-        // console.log(action)
-        localStorage.setItem("isLoggedIn", true);
-        
-        localStorage.setItem("isAdmin", action.payload.data.data.isAdmin);
         state.isLoggedIn = true;
         state.isAdmin = action.payload.data.data.isAdmin;
       })
       .addCase(login.fulfilled, (state, action) => {
-        localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("isAdmin", action.payload.data.data.user.isAdmin);
         state.isLoggedIn = true;
         state.isAdmin = action.payload.data.data.user.isAdmin;
       });

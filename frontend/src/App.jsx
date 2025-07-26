@@ -9,6 +9,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Notfound from "./Pages/NotFound";
 import RequireAuth from "./Components/RequireAuth";
 import Contact from "./Pages/Contact";
+import About from "./Pages/About";
 
 function App() {
   const { user } = useAuth0();
@@ -18,6 +19,7 @@ function App() {
       <Route path="/movies" element={<MoviesList />}></Route>
       <Route path="/login" element={<Login />}></Route>
       <Route path="/register" element={<Register />}></Route>
+      <Route path="/about" element={<About />}></Route>
       <Route element={<RequireAuth />}>
         <Route
           path="/movies/description/:title"

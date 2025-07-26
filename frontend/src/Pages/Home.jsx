@@ -101,10 +101,10 @@ export default function Home() {
                     </span>
                   </p>
                   <p className=" font-semibold sm:inline-block">
-                    Duration:
+                    Duration: 
                     <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
-                      2h 49min
+                       2h 49min
                     </span>
                   </p>
                   <p className=" font-semibold ">
@@ -140,7 +140,7 @@ export default function Home() {
                     Duration:
                     <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
-                      1h 39min
+                       1h 39min
                     </span>
                   </p>
                   <p className=" font-semibold">
@@ -176,7 +176,7 @@ export default function Home() {
                     Duration:
                     <span className=" font-bold text-yellow-500 sm:inline-block">
                       {" "}
-                      2h 38min
+                       2h 38min
                     </span>
                   </p>
                   <p className="font-semibold">

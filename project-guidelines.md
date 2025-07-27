@@ -15,7 +15,12 @@ cd SACRED_HEARTS
   cp backend/.env.sample backend/.env
   # Edit backend/.env and fill in all required values (e.g., MongoDB URI, Cloudinary credentials, etc.)
   ```
-- Review the `.env.sample` file for all required variables.
+- Go to the `frontend` directory and copy the sample environment file:
+  ```bash
+  cp frontend/.env.sample frontend/.env
+  # Edit frontend/.env and set the correct API base URL if needed
+  ```
+- Review the `.env.sample` files for all required variables.
 
 ### 3. Prerequisites
 - **Node.js** (v18 or higher recommended)
@@ -27,7 +32,7 @@ cd SACRED_HEARTS
 ## Running the Application
 
 ### Option 1: Using Docker (Recommended)
-1. Make sure your `.env` file is set up in the backend as described above.
+1. Make sure your `.env` files are set up in both backend and frontend as described above.
 2. Start all services (backend, frontend, MongoDB) with Docker Compose:
    ```bash
    docker-compose up --build
@@ -63,6 +68,6 @@ cd SACRED_HEARTS
 ---
 
 **Note:**
-- Make sure to configure all required environment variables in your `.env` file.
+- Make sure to configure all required environment variables in your `.env` files.
 - For production, use optimized builds and secure environment management.
 - You must have valid Cloudinary credentials for media upload features to work.

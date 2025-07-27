@@ -1,8 +1,14 @@
 import axios from "axios";
 
-// "https://sacred-hearts.onrender.com/api/v1";
 
-const BASE_URL = "http://localhost:4000/api/v1";
+
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+
+
+
+console.log("BASE_URL", BASE_URL);
 const axiosInstance = axios.create();
 
 axiosInstance.defaults.baseURL = BASE_URL;

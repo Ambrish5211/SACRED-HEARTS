@@ -1,37 +1,68 @@
-# Project guid-lines
+# Project Guidelines
 
-## Source Control Management (SCM)
-- add new feature
-    1. create a branch from backend-main or frontend-main name the branch prefix (feature-) ex: <b>feature-feature-name</b>.
-        ```bash
-        git switch backend-main
-        git branch feature-feature-name/your-name
-        git checkout feature-feature-name/your-name
-        work in your own branch
-        ```
-    2. how to commit?
-        
-        ```
-        - git add .
-        - git commit -m "add message related to commit"
-        - git push
-        - open pull request afterwards and don't forget to assign reviewers 
+## Getting Started
 
-        ```
+### 1. Clone the Repository
+Clone the project to your local machine:
+```bash
+git clone https://github.com/Ambrish5211/SACRED-HEARTS.git
+cd SACRED_HEARTS
+```
 
-    3. raise a pull request to the base backend-main or frontend-main to feature branch.
-    ```
-        - goto [link](https://github.com/Ambrish5211/SACRED-HEARTS/pulls)
-        - create new pull request
-        - base (from which you have created branch)
-        - compare (your new feature branch name )
-    ```    
-    4. request review to other collaborator.
-    5. wait for review approval.
-    6. merge you branch (need review request to be approved by at-least one reviewers).
+### 2. Set Up Environment Variables
+- Go to the `backend` directory and copy the sample environment file:
+  ```bash
+  cp backend/.env.sample backend/.env
+  # Edit backend/.env and fill in all required values (e.g., MongoDB URI, Cloudinary credentials, etc.)
+  ```
+- Review the `.env.sample` file for all required variables.
 
-- add new issue
-    1. goto [link](https://github.com/Ambrish5211/SACRED-HEARTS/issues)
-    2. add new issue, 
-        - Title (error message with branch name).
-        - copy paste the full length error message
+### 3. Prerequisites
+- **Node.js** (v18 or higher recommended)
+- **MongoDB** (local or use the provided Docker setup)
+- **Cloudinary account** (for media uploads; get your API credentials from https://cloudinary.com/)
+
+---
+
+## Running the Application
+
+### Option 1: Using Docker (Recommended)
+1. Make sure your `.env` file is set up in the backend as described above.
+2. Start all services (backend, frontend, MongoDB) with Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+3. The backend will be available at http://localhost:4000 and the frontend at http://localhost:5173 by default.
+
+### Option 2: Without Docker (Manual Setup)
+
+#### Backend
+1. Ensure MongoDB is running locally (or update your `.env` to point to a remote instance).
+2. Install dependencies:
+   ```bash
+   cd backend
+   npm install
+   ```
+3. Start the backend server:
+   ```bash
+   npm run dev
+   ```
+
+#### Frontend
+1. Install dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Start the frontend dev server:
+   ```bash
+   npm run dev
+   ```
+3. The frontend will be available at http://localhost:5173.
+
+---
+
+**Note:**
+- Make sure to configure all required environment variables in your `.env` file.
+- For production, use optimized builds and secure environment management.
+- You must have valid Cloudinary credentials for media upload features to work.

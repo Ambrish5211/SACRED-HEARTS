@@ -1,8 +1,8 @@
-FROM node:18.9.1
+FROM node:22.14.0
 
 WORKDIR /app
 
-COPY package.json .
+COPY package*.json .
 
 RUN npm install
 

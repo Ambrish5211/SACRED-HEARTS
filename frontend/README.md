@@ -1,4 +1,14 @@
-# React + Vite
+# Frontend for SACRED-HEARTS
+
+This is the frontend application for the SACRED-HEARTS movie streaming platform. It provides a modern, responsive user interface for browsing, streaming, and downloading movies.
+
+For setup and usage instructions, see the [Project Guidelines](../project-guidelines.md).
+
+---
+
+## About the Stack
+
+This project uses React + Vite for fast development and HMR. See below for more info:
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

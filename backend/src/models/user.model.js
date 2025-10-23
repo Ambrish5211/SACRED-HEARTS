@@ -1,16 +1,8 @@
-import mongoose, { mongo, Schema } from "mongoose";
+import mongoose, {  Schema } from "mongoose";
 import  jwt  from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 const UserSchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      index: true,
-    },
     email: {
       type: String,
       required: true,
@@ -29,6 +21,12 @@ const UserSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    recentlyWatched: [
+      {
+        type: Schema.Types.ObjectId,
+        ref : "Movie"
+      }
+    ]
   },
   { timestamps: true }
 );
@@ -45,12 +43,10 @@ UserSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 UserSchema.methods.generateAccessToken = function () {
-  console.log(this)
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
-      username: this.username,
       
     },
     process.env.ACCESS_TOKEN_SECRET,
@@ -59,6 +55,8 @@ UserSchema.methods.generateAccessToken = function () {
     }
   );
 };
+
+// jwt is a bearer token
 
 UserSchema.methods.generateRefreshToken = function () {
   return jwt.sign(

@@ -1,7 +1,12 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const movieSchema = new Schema(
   {
+    owner: {
+      type : Schema.Types.ObjectId,
+      ref : "User"
+    },
     videoFile: {
       type: String,
       required: true,
@@ -20,15 +25,31 @@ const movieSchema = new Schema(
     },
     duration: {
       type: Number,
-      
+      required: true
     },
-    genre:{
-        type: String,
+    genreId:[
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Genre",
         required: true,
+      }
+    ],
+    avgRating:{
+      type: Number,
+      required: true,
+    },
+    totalRatings:{
+      type: Number,
+      required: true
+    },
+    totalRatingValue: {
+      type: Number,
+      required: true
     }
   },
   { timestamps: true }
 );
 
+movieSchema.plugin(mongooseAggregatePaginate)
 
 export const Movie = mongoose.model("Movie", movieSchema);

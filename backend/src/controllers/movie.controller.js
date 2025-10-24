@@ -32,19 +32,22 @@ const addMovie = asyncHandler(async (req, res) => {
             throw new ApiError(400, "All fields are required");
           }
 
-        const thumbnailPath = req.files?.thumbnail[0]?.path;
-        const moviePath = req.files?.videoFile[0]?.path;
+        // remember that this req.files is updated in req by multer, so this is what multer does it accepts media files frontend, upload on the server itself..then we take those files path(it will be in public/temp) here and upload those files on cloudinary
 
-        if(!thumbnailPath) {
+        const thumbnailServerPath = req.files?.thumbnail[0]?.path;
+        console.log(thumbnailPath)
+        const movieServerPath = req.files?.videoFile[0]?.path;
+
+        if(!thumbnailServerPath) {
             throw new ApiError(400, "Thumbnail is required")
         }
 
-        if(!moviePath) {
+        if(!movieServerPath) {
             throw new ApiError(400, "Movie path is required")
         }
 
-        const thumbnail = await uploadOnCloudinary(thumbnailPath)
-        const movieUpload = await uploadOnCloudinary(moviePath)
+        const thumbnail = await uploadOnCloudinary(thumbnailServerPath)
+        const movieUpload = await uploadOnCloudinary(movieServerPath)
 
         if (!thumbnail || !movieUpload) {
             throw new ApiError(400, "Failed to upload files to Cloudinary");

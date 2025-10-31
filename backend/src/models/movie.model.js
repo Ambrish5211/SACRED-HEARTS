@@ -27,6 +27,16 @@ const movieSchema = new Schema(
       type: Number,
       required: true
     },
+    year: {
+      type: Number,
+      required: true
+    },
+    languages: [
+      {
+        type: String,
+        required: true
+      }
+    ],
     genreId:[
       {
         type: Schema.Types.ObjectId,
@@ -34,6 +44,9 @@ const movieSchema = new Schema(
         required: true,
       }
     ],
+    genreName: [{
+      type: String
+    }],
     avgRating:{
       type: Number,
       required: true,

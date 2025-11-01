@@ -37,27 +37,24 @@ const movieSchema = new Schema(
         required: true
       }
     ],
-    genreId:[
+    genres:[
       {
-        type: Schema.Types.ObjectId,
-        ref: "Genre",
-        required: true,
+       id : { type: Schema.Types.ObjectId, ref: "Genre"},
+       name: String
       }
     ],
-    genreName: [{
-      type: String
-    }],
+   
     avgRating:{
       type: Number,
-      required: true,
+      default: 0
     },
     totalRatings:{
       type: Number,
-      required: true
+      default:0
     },
     totalRatingValue: {
       type: Number,
-      required: true
+      default:0
     }
   },
   { timestamps: true }

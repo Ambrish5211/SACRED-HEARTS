@@ -2,16 +2,17 @@ import { Movie } from "../models/movie.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // Get top 6 rated movies DONE
 // changes in all movies that you get only required like - thumbnail, title, duration, year, language DONE
 // movies/:id DONE
 
-// improve addMovie controller
+// improve addMovie controller DONE
 
-// how to handle genre -  make an api call to get all genre on add movie page and send selected genre id and accept in adding movies controller
-// how to handle owner - get owner id from req.user because we will check jwt right
+// how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
+// han
+// how to handle owner - get owner id from req.user because we will check jwt right DONE
 // how to handle ratings - handle in rating update controller and later on deploy kafka
 
 // add redis for caching
@@ -72,17 +73,19 @@ const movieById = asyncHandler(async (req, res) => {
 
 const addMovie = asyncHandler(async (req, res) => {
     try {
-        const {  title, description, genre } = req.body;
+        const {  title, description, year, languages, genres } = req.body;
         if (
-            [ title, description, genre].some((field) => field?.trim() === "")
+            [ title, description, year].some((field) => field?.trim() === "") || languages.length === 0
           ) {
             throw new ApiError(400, "All fields are required");
           }
 
+          const owner  = req.user._id;
+         
+
         // remember that this req.files is updated in req by multer, so this is what multer does it accepts media files frontend, upload on the server itself..then we take those files path(it will be in public/temp) here and upload those files on cloudinary and then gets deleted in cloudinary code
 
         const thumbnailServerPath = req.files?.thumbnail[0]?.path;
-        console.log(thumbnailPath)
         const movieServerPath = req.files?.videoFile[0]?.path;
 
         if(!thumbnailServerPath) {
@@ -101,21 +104,24 @@ const addMovie = asyncHandler(async (req, res) => {
           }
 
 
-        const durationInMinutes = (movieUpload.duration) / 60;
+        const durationInMinutes = movieUpload?.duration ? (movieUpload.duration) / 60 : 0;
       
 
         const movie = await Movie.create({
             title,
             thumbnail: thumbnail.url,
             videoFile: movieUpload.url ,
-            description, 
-            genre,
+            description,
+            languages,
+            genres,
+            owner,
+            year, 
             duration: durationInMinutes,
             
         })
 
-        return res.status(200).json(
-            new ApiResponse(200, {
+        return res.status(201).json(
+            new ApiResponse(201, {
                 movie: movie,
 
             },
@@ -129,7 +135,39 @@ const addMovie = asyncHandler(async (req, res) => {
 })
 
 
+const deleteMovie = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        const movie = await Movie.findById(id);
+        if(!movie){
+            throw new ApiError(404, "Movie not found")
+        }
+    
+        const thumbnailPublicId = movie.thumbnail?.public_id;
+        const videoFilePublicId = movie.videoFile?.public_id;
+    
+        await deleteOnCloudinary(thumbnailPublicId);
+        await deleteOnCloudinary(videoFilePublicId, "video");
+    
+        // await Rating.deleteMany({movieId: id}) later do it
+    
+        await Movie.findByIdAndDelete(id)
+
+        res.
+        status(200)
+        .json(
+            new ApiResponse(200,{
+                movie
+            }, "Movie Deleted Successfully")
+        )
+    
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while deleting the movie")
+    }
+})
 
 
 
-export {topRatedMovies ,moviesList, movieById, addMovie};
+
+
+export {topRatedMovies ,moviesList, movieById, addMovie, deleteMovie};

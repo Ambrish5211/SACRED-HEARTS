@@ -7,18 +7,16 @@ import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 // Get top 6 rated movies DONE
 // changes in all movies that you get only required like - thumbnail, title, duration, year, language DONE
 // movies/:id DONE
-
+// -DELETE MOVIE DONE
+// -UPDATE MOVIE Handle text data, thumbnail change, videoFile change DONE
 // improve addMovie controller DONE
+// how to handle owner - get owner id from req.user because we will check jwt right DONE
 
 // how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
-// han
-// how to handle owner - get owner id from req.user because we will check jwt right DONE
 // how to handle ratings - handle in rating update controller and later on deploy kafka
 
 // add redis for caching
 // search using mongoDB atlas search later
-// -UPDATE MOVIE 
-// -DELETE MOVIE 
 
 
 
@@ -135,6 +133,54 @@ const addMovie = asyncHandler(async (req, res) => {
 })
 
 
+const updateMovieDetails = asyncHandler(async (req, res) => {
+    try {
+        const { movieId } = req.params;
+        const { title, description, year, languages, genres } = req.body;
+
+    if (!movieId) {
+      throw new ApiError(400, "Movie ID is required");
+    }
+
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      throw new ApiError(404, "Movie not found");
+    }
+
+    if (title) movie.title = title;
+    if (description) movie.description = description;
+    if (year) movie.year = year;
+    if (languages && languages.length > 0) movie.languages = languages;
+    if (genres && genres.length > 0) movie.genres = genres;
+
+    const newThumbnailPath = req.files?.thumbnail?.[0]?.path;
+    const newVideoPath = req.files?.videoFile?.[0]?.path;
+
+    if (newThumbnailPath) {
+      if (movie.thumbnail) await deleteOnCloudinary(movie.thumbnail);
+      const newThumbnail = await uploadOnCloudinary(newThumbnailPath);
+      movie.thumbnail = newThumbnail.url;
+    }
+
+    if (newVideoPath) {
+      if (movie.videoFile) await deleteOnCloudinary(movie.videoFile);
+      const newVideo = await uploadOnCloudinary(newVideoPath);
+      movie.videoFile = newVideo.url;
+      movie.duration = newVideo.duration / 60; 
+    }
+
+    await movie.save();
+
+    return res.status(200).json(
+      new ApiResponse(200, { movie }, "Movie updated successfully")
+    );
+        
+    } catch (error) {
+        throw new ApiError(500, `Something went wrong while updating the fields ${error} `)
+    }
+})
+
+
 const deleteMovie = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
@@ -170,4 +216,4 @@ const deleteMovie = asyncHandler(async (req, res) => {
 
 
 
-export {topRatedMovies ,moviesList, movieById, addMovie, deleteMovie};
+export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, deleteMovie};

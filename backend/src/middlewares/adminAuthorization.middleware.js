@@ -1,8 +1,8 @@
-import { ApiError } from "../utils/apiError";
+import { ApiError } from "../utils/apiError.js";
 
 export  const isAdmin = (req, res, next) =>{
     const user = req.user;
-    if(user.role != "ADMIN"){
+    if(!isAdmin){
         throw new ApiError(403, "Access Denied, Admin only")
     }
     next()

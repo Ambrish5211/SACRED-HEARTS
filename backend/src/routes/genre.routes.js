@@ -7,9 +7,9 @@ const router = Router();
 
 
 router.route("/add-genre").post(verifyJWT, isAdmin, addGenre)
-router.route("/get-genre/:id").get(verifyJWT,isAdmin, getGenreById)
 router.route("/genre-list").get(verifyJWT, isAdmin, genreList)
+router.route("/:id").get(verifyJWT,isAdmin, getGenreById)
 router.route("/update-genre/:genreId").patch(verifyJWT, isAdmin, updateGenre)
-router.route("delete-genre/:id").delete(verifyJWT, isAdmin, deleteGenre)
+router.route("/delete-genre/:id").delete(verifyJWT, isAdmin, deleteGenre)
 
 export default router

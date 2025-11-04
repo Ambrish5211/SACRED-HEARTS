@@ -25,7 +25,6 @@ const movieSchema = new Schema(
     },
     duration: {
       type: Number,
-      required: true
     },
     year: {
       type: Number,
@@ -39,7 +38,7 @@ const movieSchema = new Schema(
     ],
     genres:[
       {
-       id : { type: Schema.Types.ObjectId, ref: "Genre"},
+        type: Schema.Types.ObjectId, ref: "Genre",
       }
     ],
   },

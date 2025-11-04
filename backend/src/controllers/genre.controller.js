@@ -1,4 +1,5 @@
 
+import mongoose from "mongoose";
 import { Genre } from "../models/genre.model.js";
 import { Movie } from "../models/movie.model.js";
 import { ApiError } from "../utils/apiError.js";
@@ -52,7 +53,7 @@ const getGenreById = asyncHandler(async (req, res)=>{
             new ApiResponse(200, genre, "Fetched genre successfully")
         )
     } catch (error) {
-        new ApiError(500, `Something went wrong while fetching the genre ${error.message}`)
+        throw new ApiError(500, `Something went wrong while fetching the genre ${error.message}`)
     }
 })
 
@@ -102,13 +103,14 @@ const deleteGenre = asyncHandler(async (req, res) => {
         if(!id){
             throw new ApiError(400, `Id is necessary`)
         }
-        const genre  = await Genre.findById(id);
+        const genre  = await Genre.findById(Object(id));
         if(!genre){
             throw new ApiError(404, `Could not find genre with id: ${id}`)
         }
+        const genreObjectId = new mongoose.Types.ObjectId(id);
         await Movie.updateMany(
-            { genres: id },
-            { $pull: { genres: id } }
+            { genres: genreObjectId },
+            { $pull: { genres: genreObjectId } }
         )
         await Genre.findByIdAndDelete(id);
         res.status(200)
@@ -116,7 +118,7 @@ const deleteGenre = asyncHandler(async (req, res) => {
             new ApiResponse(200, {}, "Genre deleted successfully")
         )
    } catch (error) {
-    throw new ApiError(`Something went wrong while deleting the genre ${error.message}`)
+    throw new ApiError(500, `Something went wrong while deleting the genre msg: ${error.message}`)
    }
 })
 

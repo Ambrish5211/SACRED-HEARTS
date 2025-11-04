@@ -7,11 +7,9 @@ import { isAdmin } from "../middlewares/adminAuthorization.middleware.js";
 const router = Router();
 
 router.route("/top-rated-movies").get(topRatedMovies);
-router.route("/movieList").get(moviesList);
-
+router.route("/movie-list").get(moviesList);
 // protected routes
-router.route("/:id").get(verifyJWT, movieById);
-router.route("/addMovie").post( upload.fields([
+router.route("/add-movie").post( upload.fields([
     {
         name: "videoFile",
         maxCount: 1,
@@ -22,8 +20,9 @@ router.route("/addMovie").post( upload.fields([
     },
     
 ]),verifyJWT, isAdmin, addMovie);
+router.route("/:id").get(verifyJWT, movieById);
 router.route("/update-movie/:id").patch(verifyJWT, isAdmin, updateMovieDetails);
-router.route("/delete/:id").delete(verifyJWT, isAdmin, deleteMovie);
+router.route("/delete-movie/:id").delete(verifyJWT, isAdmin, deleteMovie);
    
 
 

@@ -5,39 +5,54 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
-// Get top 6 rated movies DONE
-// changes in all movies that you get only required like - thumbnail, title, duration, year, language DONE
-// movies/:id DONE
-// -DELETE MOVIE DONE
-// -UPDATE MOVIE Handle text data, thumbnail change, videoFile change DONE
-// improve addMovie controller DONE
-// how to handle owner - get owner id from req.user because we will check jwt right DONE
-
-// how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
-// how to handle ratings - handle in rating update controller and later on deploy kafka
-
-// add redis for caching
-// search using mongoDB atlas search later
 
 
 
-const topRatedMovies = asyncHandler( async (req, res) => {
-    try {
-         const movies = await Movie.find()
-          .select("title thumbnail duration year languages")
-          .limit(6)
-          .lean();
-        return res
-        .status(200)
-        .json(
-            new ApiResponse(200, {
-                movies : movies
-            })
-        )
-    } catch (error) {
-        throw new Error(500, `Something went wrong while retrieving top rated movies ${error}`)
-    }
-})
+
+const topRatedMovies = asyncHandler(async (req, res) => {
+  try {
+    const topMovies = await Rating.aggregate([
+        // group by movies and take avg 
+      {
+        $group: {
+          _id: "$movieId",
+          avgRating: { $avg: "$rating" },
+          totalRatings: { $sum: 1 },
+        },
+      },
+      { $sort: { avgRating: -1, totalRatings: -1 } },
+      { $limit: 6 },
+      {
+        $lookup: {
+          from: "movies",
+          localField: "_id",
+          foreignField: "_id",
+          as: "movie",
+        },
+      },
+      { $unwind: "$movie" },
+      {
+        $project: {
+          _id: 0,
+          movieId: "$movie._id",
+          title: "$movie.title",
+          thumbnail: "$movie.thumbnail",
+          duration: "$movie.duration",
+          year: "$movie.year",
+          languages: "$movie.languages",
+          avgRating: 1,
+          totalRatings: 1,
+        },
+      },
+    ]);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, topMovies, "Fetched top rated movies successfully"));
+  } catch (error) {
+    throw new ApiError(500, `Something went wrong while retrieving top rated movies: ${error.message}`);
+  }
+});
 
 
 const moviesList = asyncHandler(async (req, res) => {
@@ -87,7 +102,11 @@ const movieById = asyncHandler(async (req, res) => {
 
 const addMovie = asyncHandler(async (req, res) => {
     try {
-        const {  title, description, year, languages, genres } = req.body;
+        
+        const {  title, description, year } = req.body;
+        const genres = JSON.parse(req.body.genres);
+        const languages = JSON.parse(req.body.languages);
+
         if (
             [ title, description, year].some((field) => field?.trim() === "") || languages.length === 0
           ) {
@@ -151,8 +170,11 @@ const addMovie = asyncHandler(async (req, res) => {
 
 const updateMovieDetails = asyncHandler(async (req, res) => {
     try {
-        const { movieId } = req.params;
-        const { title, description, year, languages, genres } = req.body;
+        const  movieId  = req.params.id;
+        const genres = req.body.genres ? JSON.parse(req.body.genres) : [];
+        const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
+        const { title, description, year } = req.body;
+        
 
     if (!movieId) {
       throw new ApiError(400, "Movie ID is required");
@@ -162,7 +184,6 @@ const updateMovieDetails = asyncHandler(async (req, res) => {
     if (!movie) {
       throw new ApiError(404, "Movie not found");
     }
-
     if (title) movie.title = title;
     if (description) movie.description = description;
     if (year) movie.year = year;
@@ -232,3 +253,22 @@ const deleteMovie = asyncHandler(async (req, res) => {
 
 
 export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, deleteMovie};
+
+
+
+
+
+
+// Get top 6 rated movies DONE
+// changes in all movies that you get only required like - thumbnail, title, duration, year, language DONE
+// movies/:id DONE
+// -DELETE MOVIE DONE
+// -UPDATE MOVIE Handle text data, thumbnail change, videoFile change DONE
+// improve addMovie controller DONE
+// how to handle owner - get owner id from req.user because we will check jwt right DONE
+
+// how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
+// how to handle ratings - handle in rating update controller and later on deploy kafka
+
+// add redis for caching
+// search using mongoDB atlas search later

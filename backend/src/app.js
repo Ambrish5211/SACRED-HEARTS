@@ -21,9 +21,12 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import movieRouter from "./routes/movies.routes.js"
 import genreRouter from "./routes/genre.routes.js"
+import ratingRouter from "./routes/rating.routes.js"
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/movies", movieRouter);
 app.use("/api/v1/genre", genreRouter)
+app.use("/api/v1/rating", ratingRouter)
+
 
 export { app };

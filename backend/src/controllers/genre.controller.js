@@ -1,6 +1,6 @@
-// handle genre update gracefully and do updates in movies as well to handle data inconsistency
 
 import { Genre } from "../models/genre.model.js";
+import { Movie } from "../models/movie.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -36,6 +36,26 @@ const addGenre = asyncHandler(async (req, res) =>{
     }
 })
 
+const getGenreById = asyncHandler(async (req, res)=>{
+    try {
+        const {id} = req.params;
+        if(!id){
+            throw new ApiError(400, `Id is necessary`)
+        }
+        const genre  = await Genre.findById(id);
+        if(!genre){
+            throw new ApiError(404, `Could not find genre with id: ${id}`)
+        }
+        res
+        .status(200)
+        .json(
+            new ApiResponse(200, genre, "Fetched genre successfully")
+        )
+    } catch (error) {
+        new ApiError(500, `Something went wrong while fetching the genre ${error.message}`)
+    }
+})
+
 const genreList = asyncHandler( async (req, res) => {
     try {
         const genres = await Genre.find()
@@ -62,7 +82,7 @@ const updateGenre = asyncHandler( async (req, res) =>{
      if(!genre) {
          throw new ApiError(404, "Genre not found")
      }
-     if(name) genre.name = name;
+     if(name) genre.name = name.trim();
  
      await genre.save();
 
@@ -76,5 +96,29 @@ const updateGenre = asyncHandler( async (req, res) =>{
    }
 })
 
+const deleteGenre = asyncHandler(async (req, res) => {
+   try {
+    const {id} = req.params;
+        if(!id){
+            throw new ApiError(400, `Id is necessary`)
+        }
+        const genre  = await Genre.findById(id);
+        if(!genre){
+            throw new ApiError(404, `Could not find genre with id: ${id}`)
+        }
+        await Movie.updateMany(
+            { genres: id },
+            { $pull: { genres: id } }
+        )
+        await Genre.findByIdAndDelete(id);
+        res.status(200)
+        .json(
+            new ApiResponse(200, {}, "Genre deleted successfully")
+        )
+   } catch (error) {
+    throw new ApiError(`Something went wrong while deleting the genre ${error.message}`)
+   }
+})
 
-export {addGenre, genreList, updateGenre}
+
+export {addGenre,getGenreById, genreList, updateGenre, deleteGenre}

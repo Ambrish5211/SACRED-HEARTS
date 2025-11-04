@@ -1,4 +1,5 @@
 import { Movie } from "../models/movie.model.js";
+import { Rating } from "../models/rating.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -55,14 +56,29 @@ const moviesList = asyncHandler(async (req, res) => {
 const movieById = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
-        const movie = await Movie.findById(id).select("-owner -genreId -totalRatings")
+        const movie = await Movie.findById(id).populate("genres", "name -_id").select("-owner")
         if(!movie){
             throw new ApiError(404, "Movie not found")
         }
+
+        const ratingStats = await Rating.aggregate([
+           { $match : { movieId : movie._id}},
+            {
+                $group: {
+                    _id : "$movie",
+                    avgRating: { $avg : "$rating"},
+                    totalRatings : {$sum:1}
+                }
+            }
+
+        ])
+
+         const { avgRating = 0, totalRatings = 0 } = ratingStats[0] || {};
+
         return res
         .status(200)
         .json(
-            new ApiResponse(200, { movie }, "Movie fetched successfully")
+            new ApiResponse(200, { movie, avgRating, totalRatings }, "Movie fetched successfully")
         );
     } catch (error) {
         throw new ApiError(500, `Something went wrong while fetching the movie ${error}`)
@@ -195,16 +211,15 @@ const deleteMovie = asyncHandler(async (req, res) => {
         await deleteOnCloudinary(thumbnailPublicId);
         await deleteOnCloudinary(videoFilePublicId, "video");
     
-        // await Rating.deleteMany({movieId: id}) later do it
+        await Rating.deleteMany({movieId: id})
     
         await Movie.findByIdAndDelete(id)
 
         res.
-        status(200)
+        status(204)
         .json(
-            new ApiResponse(200,{
-                movie
-            }, "Movie Deleted Successfully")
+            new ApiResponse(200,{}
+            , "Movie Deleted Successfully")
         )
     
     } catch (error) {

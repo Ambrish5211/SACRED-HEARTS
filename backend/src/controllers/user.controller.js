@@ -203,4 +203,23 @@ const getUser = asyncHandler((req, res) => {
   .json( new ApiResponse(200, {user: req.user}, "User fecthed successfully"));
 })
 
-export { registerUser, loginUser , logoutUser, refreshAccessToken, getUser};
+const getRecentlyWatched = asyncHandler(async (req, res) => {
+  const userid = req.user._id;
+  if(!userid){
+    throw new ApiError(400, "User id is required")
+  }
+  const user  = await User.findById(userid).populate("recentlyWatched", "thumbnail title duration year languages").select("recentlyWatched")
+  if(!user){
+    throw new ApiError(404, "User not found")
+  }
+
+  res
+  .status(200)
+  .json(
+    new ApiResponse(200, { user}, "Fetched recently watch successfully")
+  )
+})
+
+
+
+export { registerUser, loginUser , logoutUser, refreshAccessToken, getUser, getRecentlyWatched};

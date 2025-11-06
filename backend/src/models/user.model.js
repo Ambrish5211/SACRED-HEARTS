@@ -21,6 +21,12 @@ const UserSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    watchList : [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Movie"
+      }
+    ],
     recentlyWatched: [
       {
         type: Schema.Types.ObjectId,

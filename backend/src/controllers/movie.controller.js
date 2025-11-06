@@ -1,5 +1,6 @@
 import { Movie } from "../models/movie.model.js";
 import { Rating } from "../models/rating.model.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -57,7 +58,7 @@ const topRatedMovies = asyncHandler(async (req, res) => {
 
 const moviesList = asyncHandler(async (req, res) => {
   try {
-        const movies = await Movie.find().select("-owner -videoFile -description -genreId -totalRatings -totalRatingValue");
+        const movies = await Movie.find().select("-owner -videoFile -description -genreId  ");
        return res.status(200).json(
         new ApiResponse(200, {
             moviesList : movies
@@ -72,6 +73,17 @@ const movieById = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
         const movie = await Movie.findById(id).populate("genres", "name -_id").select("-owner")
+        const userid = req.user._id;
+        const user = await User.findById(userid);
+        if(!user){
+            throw new ApiError(404, "User not found")
+        }
+        if (!user.recentlyWatched.some(m => m.toString() === id)) {
+            user.recentlyWatched.push(id);
+            if (user.recentlyWatched.length > 20) user.recentlyWatched.pop();
+            await user.save();
+        }
+        
         if(!movie){
             throw new ApiError(404, "Movie not found")
         }
@@ -268,7 +280,7 @@ export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, del
 // how to handle owner - get owner id from req.user because we will check jwt right DONE
 
 // how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
-// how to handle ratings - handle in rating update controller and later on deploy kafka
 
-// add redis for caching
+// watchlist feature
+// add redis for caching - recently watch, rating update - rating limiting and updating
 // search using mongoDB atlas search later

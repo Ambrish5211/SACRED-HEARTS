@@ -22,7 +22,7 @@ const topRatedMovies = asyncHandler(async (req, res) => {
         },
       },
       { $sort: { avgRating: -1, totalRatings: -1 } },
-      { $limit: 6 },
+      { $limit: 3 },
       {
         $lookup: {
           from: "movies",
@@ -56,6 +56,9 @@ const topRatedMovies = asyncHandler(async (req, res) => {
 });
 
 
+
+
+
 const moviesList = asyncHandler(async (req, res) => {
   try {
         const movies = await Movie.find().select("-owner -videoFile -description -genreId  ");
@@ -67,7 +70,10 @@ const moviesList = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new ApiError(500,`Something went wrong while retrieving all the movies ${error}`)
   }
-})
+});
+
+
+
 
 const movieById = asyncHandler(async (req, res) => {
     try {
@@ -79,8 +85,8 @@ const movieById = asyncHandler(async (req, res) => {
             throw new ApiError(404, "User not found")
         }
         if (!user.recentlyWatched.some(m => m.toString() === id)) {
-            user.recentlyWatched.push(id);
-            if (user.recentlyWatched.length > 20) user.recentlyWatched.pop();
+            user.recentlyWatched.unshift(id);
+            if (user.recentlyWatched.length > 3) user.recentlyWatched.pop();
             await user.save();
         }
         
@@ -260,11 +266,121 @@ const deleteMovie = asyncHandler(async (req, res) => {
     }
 })
 
+const searchMovies = asyncHandler(async (req, res) => {
+  const { query, genreId, language, year } = req.query;
+
+  const pipeline = [];
+
+  // 🔍 Search (title + description)
+  if (query) {
+    pipeline.push({
+      $search: {
+        index: "moviesearchindex",
+        compound: {
+          should: [
+            {
+              autocomplete: {
+                query,
+                path: "title",
+                fuzzy: { maxEdits: 1 },
+                score: { boost: { value: 5 } }
+              }
+            },
+            {
+              text: {
+                query,
+                path: "description",
+                score: { boost: { value: 1 } }
+              }
+            }
+          ]
+        }
+      }
+    });
+  }
+
+  // 🎛 Filters (handled AFTER search)
+  const matchStage = {};
+
+  if (genreId) {
+    matchStage.genres = new mongoose.Types.ObjectId(genreId);
+  }
+
+  if (language) {
+    matchStage.languages = language;
+  }
+
+  if (year) {
+    matchStage.year = Number(year);
+  }
+
+  if (Object.keys(matchStage).length) {
+    pipeline.push({ $match: matchStage });
+  }
+
+  
+
+  // 🎬 Final response
+  pipeline.push({
+    $project: {
+      title: 1,
+      thumbnail: 1,
+      duration: 1,
+      year: 1,
+      languages: 1,
+      score: query ? { $meta: "searchScore" } : 0
+    }
+  });
+
+  const movies = await Movie.aggregate(pipeline);
+
+
+  res.status(200).json(
+    new ApiResponse(200, movies, "Movies fetched successfully")
+  );
+});
+
+
+const autocompleteMovies = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.length < 2) {
+    return res.status(200).json(
+      new ApiResponse(200, [], "Type more characters")
+    );
+  }
+
+  const suggestions = await Movie.aggregate([
+    {
+      $search: {
+        index: "moviesearchindex",
+        autocomplete: {
+          query,
+          path: "title",
+          fuzzy: { maxEdits: 1 }
+        }
+      }
+    },
+    { $limit: 8 },
+    {
+      $project: {
+        title: 1,
+        thumbnail: 1,
+        score: { $meta: "searchScore" }
+      }
+    }
+  ]);
+
+  res.status(200).json(
+    new ApiResponse(200, suggestions, "Autocomplete results")
+  );
+});
+
+// We are doing full text search on descrition, genre, year and doing autocomplete on title, but since description will have title as well, full text search will work on title as well.  
 
 
 
-
-export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, deleteMovie};
+export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies};
 
 
 
@@ -282,5 +398,5 @@ export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, del
 // how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
 
 // watchlist feature
-// add redis for caching - recently watch, rating update - rating limiting and updating
-// search using mongoDB atlas search later
+// add redis for caching - recently watch, top rated 
+// search and filter using mongoDB atlas search later DONE

@@ -62,7 +62,7 @@ const topRatedMovies = asyncHandler(async (req, res) => {
 
 const moviesList = asyncHandler(async (req, res) => {
   try {
-        const movies = await Movie.find().select("-owner -videoFile -description -genreId  ");
+      const movies = await Movie.find().select("-owner -videoFile -description -genres  ");
        return res.status(200).json(
         new ApiResponse(200, {
             moviesList : movies

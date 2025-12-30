@@ -24,13 +24,15 @@ const UserSchema = new mongoose.Schema(
     watchList : [
       {
         type: Schema.Types.ObjectId,
-        ref: "Movie"
+        ref: "Movie",
+        max: 20
       }
     ],
     recentlyWatched: [
       {
         type: Schema.Types.ObjectId,
-        ref : "Movie"
+        ref : "Movie",
+        max: 6
       }
     ]
   },

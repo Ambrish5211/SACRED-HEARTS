@@ -1,3 +1,4 @@
+import { error } from "console";
 import { Movie } from "../models/movie.model.js";
 import { Rating } from "../models/rating.model.js";
 import { User } from "../models/user.model.js";
@@ -156,6 +157,8 @@ const addMovie = asyncHandler(async (req, res) => {
 
 
         const durationInMinutes = movieUpload?.duration ? (movieUpload.duration) / 60 : 0;
+
+        description = title + ':' + description;
       
 
         const movie = await Movie.create({
@@ -380,7 +383,81 @@ const autocompleteMovies = asyncHandler(async (req, res) => {
 
 
 
-export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies};
+const addToWatchList = asyncHandler (async (req, res) => {
+ try {
+   const movieId = req.params.id;
+   const userId = req.user._id;
+ 
+   const user = await User.findById(userId);
+   const movie = await Movie.findById(movieId);
+
+   if(!movie){
+    throw new ApiError(404, "Movie not found");
+   }
+
+   if(!user){
+     throw new ApiError(404, "User not found");
+   }
+ 
+   if (user.watchList.some(id => id.toString() === movieId)) {
+    throw new ApiError(400, "Movie already exists in watchlist");
+  } 
+ 
+   if(user.watchList.length === 20) user.watchList.pop();
+ 
+   user.watchList.unshift(movieId);
+
+   await user.save();
+ 
+   return res.status(200).json(
+     new ApiResponse(200, `Movie added to watchList successfully`)
+   )
+ } catch (error) {
+   throw new ApiError(400, `Something went wrong while adding the movie to watchList. Message:  ${error.message}`);
+ }
+
+})
+
+
+const removeFromWatchList = asyncHandler( async (req, res) => {
+  
+  try {
+    const movieId = req.params.id;
+    const userid = req.user._id;
+  
+    const user = await User.findById(userid);
+    const movie = await Movie.findById(movieId);
+
+    if(!movie){
+      throw new ApiError(404, 'Movie not found');
+    }
+
+    if(!user){
+      throw new ApiError(404, 'User not found');
+    }
+  
+    const originalLength = user.watchList.length;
+  
+    user.watchList = user.watchList.filter(
+      id => id.toString() !== movieId
+    );
+  
+    if (user.watchList.length === originalLength) {
+      throw new ApiError(400, "Movie not found in watchlist");
+    }
+  
+    await user.save();
+  
+    return res.status(200).json(
+      new ApiResponse(200, null, "Movie removed from watchlist successfully")
+    );
+  
+  } catch (error) {
+     throw new ApiError(400, `Something went wrong while removing from watchList. Message: ${error.message}`)
+  }
+})
+
+export {topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList};
 
 
 
@@ -397,6 +474,6 @@ export {topRatedMovies ,moviesList, movieById, addMovie, updateMovieDetails, del
 
 // how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
 
-// watchlist feature
+// watchlist feature - DONE 
 // add redis for caching - recently watch, top rated 
 // search and filter using mongoDB atlas search later DONE

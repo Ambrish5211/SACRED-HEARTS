@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {  addMovie, autocompleteMovies, deleteMovie, movieById, moviesList, searchMovies, topRatedMovies, updateMovieDetails } from "../controllers/movie.controller.js";
+import {  addMovie, addToWatchList, autocompleteMovies, deleteMovie, movieById, moviesList, removeFromWatchList, searchMovies, topRatedMovies, updateMovieDetails } from "../controllers/movie.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/adminAuthorization.middleware.js";
@@ -26,6 +26,8 @@ router.route("/add-movie").post( upload.fields([
 router.route("/:id").get(verifyJWT, movieById);
 router.route("/update-movie/:id").patch(verifyJWT, isAdmin, updateMovieDetails);
 router.route("/delete-movie/:id").delete(verifyJWT, isAdmin, deleteMovie);
+router.route("/addToWatchList/:id").get(verifyJWT, addToWatchList);
+router.route("/removeFromWatchList/:id").get(verifyJWT, removeFromWatchList);
    
 
 

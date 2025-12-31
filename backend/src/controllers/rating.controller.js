@@ -12,21 +12,16 @@ const addRating = asyncHandler(async (req, res) =>{
         throw new ApiError(400, "All fields are necessary")
     }
 
-    const existingRating = await Rating.findOne({userId, movieId})
-    if(existingRating) {
-       throw new ApiError(400, "User rated this movie already")
-    }
-
-    const createdRating  = await Rating.create({
-        rating,
-        movieId,
-        userId
-    })
+    const updatedRating = await Rating.findOneAndUpdate(
+    { userId, movieId },           
+    { rating },                   
+    { new: true, upsert: true }   
+  );
 
     return res
     .status(201)
     .json(
-        new ApiResponse(201,createdRating,"Rating added successfully")
+        new ApiResponse(201,updatedRating,"Rating added successfully")
     )
     
 })

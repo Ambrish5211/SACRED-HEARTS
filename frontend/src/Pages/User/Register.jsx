@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { isEmail, isValidPassword } from "../../helpers/regexMatcher";
 import HomeLayout from "../../Layouts/HomeLayout";
@@ -13,9 +14,10 @@ function Register() {
 
   const [signupDetails, setSignupDetails] = useState({
     email: "",
-    username: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleUserInput(e) {
     const { name, value } = e.target;
@@ -27,19 +29,14 @@ function Register() {
 
   async function onFormSubmit(e) {
     e.preventDefault();
-    console.log(signupDetails);
     if (
       !signupDetails.email ||
-      !signupDetails.password ||
-      !signupDetails.username
+      !signupDetails.password
     ) {
       toast.error("Please fill all the details");
       return;
     }
-    if (signupDetails.username.length < 5) {
-      toast.error("Name should be atleast of 5 characters");
-      return;
-    }
+
     if (!isEmail(signupDetails.email)) {
       toast.error("Invalid email provided");
       return;
@@ -51,83 +48,79 @@ function Register() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("username", signupDetails.username);
-    formData.append("email", signupDetails.email);
-    formData.append("password", signupDetails.password);
-
     const response = await dispatch(createAccount(signupDetails));
-    if (response?.payload?.data) {
+    if (response?.payload?.success) {
       navigate("/");
+      // Clear form
+      setSignupDetails({
+        email: "",
+        password: "",
+      });
     }
-    setSignupDetails({
-      email: "",
-      username: "",
-      password: "",
-    });
   }
 
   return (
     <HomeLayout>
-      <div className="flex overflow-x-auto items-center justify-center h-[100vh]">
+      <div className="flex items-center justify-center h-screen bg-[#141414]">
         <form
           onSubmit={onFormSubmit}
           noValidate
-          className="flex flex-col justify-center gap-3 rounded-lg p-4 text-white w-35"
+          className="flex flex-col justify-center gap-5 rounded-2xl p-8 text-white w-full max-w-md bg-zinc-900/50 border border-zinc-800 shadow-2xl backdrop-blur-sm"
         >
-          <h1 className="text-2xl text-center font-bold">Registration Page</h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent">Create Account</h1>
+            <p className="text-zinc-400 text-sm mt-2 font-medium">Join us to start your journey</p>
+          </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="username" className="font-semibold">
-              Name
-            </label>
-            <input
-              onChange={handleUserInput}
-              value={signupDetails.username}
-              required
-              type="text"
-              name="username"
-              className="bg-transparent px-2 py-1 border"
-              placeholder="enter your username..."
-              id="username"
-            />
+          <div className="flex flex-col gap-4 mt-4">
+            {/* Email */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="font-semibold text-zinc-300 ml-1 text-sm uppercase tracking-wide">Email</label>
+              <input
+                onChange={handleUserInput}
+                value={signupDetails.email}
+                required
+                type="email"
+                name="email"
+                className="bg-zinc-800 text-white px-4 py-3.5 rounded-lg border border-zinc-700 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all placeholder-zinc-500"
+                placeholder="Enter your email"
+                id="email"
+              />
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="font-semibold text-zinc-300 ml-1 text-sm uppercase tracking-wide">Password</label>
+              <div className="relative">
+                <input
+                  required
+                  onChange={handleUserInput}
+                  value={signupDetails.password}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className="w-full bg-zinc-800 text-white px-4 py-3.5 rounded-lg border border-zinc-700 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all placeholder-zinc-500 pr-12"
+                  placeholder="Enter your password"
+                  id="password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer p-1"
+                  tabIndex="-1"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="font-semibold">
-              Email
-            </label>
-            <input
-              onChange={handleUserInput}
-              value={signupDetails.email}
-              required
-              type="text"
-              name="email"
-              className="bg-transparent px-2 py-1 border"
-              placeholder="enter your Email..."
-              id="email"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="font-semibold">
-              Password
-            </label>
-            <input
-              required
-              onChange={handleUserInput}
-              value={signupDetails.password}
-              type="password"
-              name="password"
-              className="bg-transparent px-2 py-1 border"
-              placeholder="enter your Password..."
-              id="password"
-            />
-          </div>
-          <button className="mt-2 bg-yellow-800 hover:bg-yellow-500 transition-all ease-in-out duration-300 cursor-pointer py-2 font-semibold text-lg">
-            Create account
+
+          <button className="mt-4 bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black py-3.5 rounded-lg text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-yellow-500/20 active:scale-95 uppercase tracking-wide">
+            Create Account
           </button>
-          <p className="text-center">
-            Already have an account ?{" "}
-            <Link to="/login" className="cusror-pointer text-accent">
+
+          <p className="text-center text-zinc-400 text-sm font-medium">
+            Already have an account?{" "}
+            <Link to="/login" className="text-yellow-500 hover:text-yellow-400 font-bold hover:underline transition-all">
               Login
             </Link>
           </p>

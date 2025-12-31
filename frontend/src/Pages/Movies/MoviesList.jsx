@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import HomeLayout from "../../Layouts/HomeLayout";
 import { getAllMovies } from "../../redux/slices/movieSlice";
 import MoviesCard from "../../Components/MoviesCard";
+
+
 function MoviesList() {
   const dispatch = useDispatch();
 
   const { movieList } = useSelector((state) => state.movie);
-  
+
 
   async function loadMovies() {
     await dispatch(getAllMovies());
@@ -25,7 +27,7 @@ function MoviesList() {
           Top Rated
           <span className="font-bold text-yellow-500"> Movies</span>
         </h1>
-        <div className="mb-10 flex flex-wrap justify-between gap-16 px-6 sm:px-12">
+        <div className="mb-10 flex flex-wrap justify-center gap-8 px-6 sm:px-12">
           {movieList?.map((element) => {
             return <MoviesCard key={element._id} data={element} />;
           })}

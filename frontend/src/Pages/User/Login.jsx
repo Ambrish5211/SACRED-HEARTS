@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { isEmail } from "../../helpers/regexMatcher";
 import HomeLayout from "../../Layouts/HomeLayout";
@@ -15,6 +16,8 @@ function Signin() {
     email: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleUserInput(e) {
     const { name, value } = e.target;
@@ -34,10 +37,9 @@ function Signin() {
       toast.error("Invalid email provided");
       return;
     }
-  
 
     const response = await dispatch(login(signinDetails));
-    if (response?.payload?.data) {
+    if (response?.payload?.success) {
       navigate("/");
     }
     setSigninDetails({
@@ -48,50 +50,66 @@ function Signin() {
 
   return (
     <HomeLayout>
-      <div className="flex h-[100vh] items-center justify-center overflow-x-auto">
+      <div className="flex items-center justify-center h-screen bg-[#141414]">
         <form
           onSubmit={onFormSubmit}
           noValidate
-          className="w-35 flex flex-col justify-center gap-3 rounded-lg p-4 text-white"
+          className="flex flex-col justify-center gap-6 rounded-2xl p-8 text-white w-full max-w-md bg-zinc-900/50 border border-zinc-800 shadow-2xl backdrop-blur-sm"
         >
-          <h1 className="text-center text-2xl font-bold">Login Page</h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent">Welcome Back</h1>
+            <p className="text-zinc-400 text-sm mt-2 font-medium">Please sign in to continue watching</p>
+          </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="font-semibold">
-              Email
-            </label>
-            <input
-              onChange={handleUserInput}
-              value={signinDetails.email}
-              required
-              type="text"
-              name="email"
-              className="border bg-transparent px-2 py-1"
-              placeholder="enter your Email..."
-              id="email"
-            />
+          <div className="flex flex-col gap-5 mt-4">
+            {/* Email */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="font-semibold text-zinc-300 ml-1 text-sm uppercase tracking-wide">Email</label>
+              <input
+                onChange={handleUserInput}
+                value={signinDetails.email}
+                required
+                type="email"
+                name="email"
+                className="bg-zinc-800 text-white px-4 py-3.5 rounded-lg border border-zinc-700 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all placeholder-zinc-500"
+                placeholder="Enter your email"
+                id="email"
+              />
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="font-semibold text-zinc-300 ml-1 text-sm uppercase tracking-wide">Password</label>
+              <div className="relative">
+                <input
+                  required
+                  onChange={handleUserInput}
+                  value={signinDetails.password}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className="w-full bg-zinc-800 text-white px-4 py-3.5 rounded-lg border border-zinc-700 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all placeholder-zinc-500 pr-12"
+                  placeholder="Enter your password"
+                  id="password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer p-1"
+                  tabIndex="-1" // prevent tab focus if desired
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="font-semibold">
-              Password
-            </label>
-            <input
-              required
-              onChange={handleUserInput}
-              value={signinDetails.password}
-              type="password"
-              name="password"
-              className="border bg-transparent px-2 py-1"
-              placeholder="enter your Password..."
-              id="password"
-            />
-          </div>
-          <button className="mt-2 cursor-pointer bg-yellow-800 py-2 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-500">
+
+          <button className="mt-4 bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black py-3.5 rounded-lg text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-yellow-500/20 active:scale-95 uppercase tracking-wide">
             Sign In
           </button>
-          <p className="text-center">
-            Don&apos;t have an account ?{" "}
-            <Link to="/register" className="cusror-pointer text-accent">
+
+          <p className="text-center text-zinc-400 text-sm font-medium">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-yellow-500 hover:text-yellow-400 font-bold hover:underline transition-all">
               Register
             </Link>
           </p>

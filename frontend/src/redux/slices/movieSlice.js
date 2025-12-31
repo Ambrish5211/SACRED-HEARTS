@@ -5,13 +5,14 @@ import axiosInstance from "../../config/axiosInstance";
 
 const initialState = {
   movieList: [],
+  currentMovie: null,
 };
 
 export const getAllMovies = createAsyncThunk(
   "/movies/getAllMovies",
   async (data) => {
     try {
-      const response =  axiosInstance.get("/movies/movieList", data);
+      const response = axiosInstance.get("/movies/movie-list", data);
       // console.log(response);
       toast.promise(response, {
         loading: "Wait! Fetching all movies",
@@ -26,15 +27,32 @@ export const getAllMovies = createAsyncThunk(
   },
 );
 
+export const getMovieById = createAsyncThunk(
+  "/movies/getMovieById",
+  async (id) => {
+    try {
+      const response = await axiosInstance.get(`/movies/${id}`);
+      return response.data;
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  },
+);
+
 const movieSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllMovies.fulfilled, (state, action) => {
-      
-      if (true) {
+
+      if (action?.payload?.data) {
         state.movieList = [...action.payload.data.moviesList];
+      }
+    });
+    builder.addCase(getMovieById.fulfilled, (state, action) => {
+      if (action?.payload?.success) {
+        state.currentMovie = action.payload.data;
       }
     });
   },

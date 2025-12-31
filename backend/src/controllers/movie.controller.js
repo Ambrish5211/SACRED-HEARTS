@@ -1,6 +1,6 @@
-import { error } from "console";
 import { Movie } from "../models/movie.model.js";
 import { Rating } from "../models/rating.model.js";
+import { Genre } from "../models/genre.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -62,7 +62,7 @@ const topRatedMovies = asyncHandler(async (req, res) => {
 
 const moviesList = asyncHandler(async (req, res) => {
   try {
-      const movies = await Movie.find().select("-owner -videoFile -description -genres  ");
+      const movies = await Movie.find().select("-owner -videoFile -description   ");
        return res.status(200).json(
         new ApiResponse(200, {
             moviesList : movies
@@ -79,7 +79,7 @@ const moviesList = asyncHandler(async (req, res) => {
 const movieById = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
-        const movie = await Movie.findById(id).populate("genres", "name -_id").select("-owner")
+        const movie = await Movie.findById(id).select("-owner")
         const userid = req.user._id;
         const user = await User.findById(userid);
         if(!user){
@@ -122,7 +122,8 @@ const movieById = asyncHandler(async (req, res) => {
 const addMovie = asyncHandler(async (req, res) => {
     try {
         
-        const {  title, description, year } = req.body;
+        const {  title, year } = req.body;
+        let {description} = req.body
         const genres = JSON.parse(req.body.genres);
         const languages = JSON.parse(req.body.languages);
 
@@ -253,7 +254,22 @@ const deleteMovie = asyncHandler(async (req, res) => {
         await deleteOnCloudinary(thumbnailPublicId);
         await deleteOnCloudinary(videoFilePublicId, "video");
     
-        await Rating.deleteMany({movieId: id})
+         await Rating.deleteMany({ movieId: id });
+
+    await User.updateMany(
+      {
+        $or: [
+          { recentlyWatched: id },
+          { watchList: id }
+        ]
+      },
+      {
+        $pull: {
+          recentlyWatched: id,
+          watchList: id
+        }
+      }
+    );
     
         await Movie.findByIdAndDelete(id)
 
@@ -265,16 +281,16 @@ const deleteMovie = asyncHandler(async (req, res) => {
         )
     
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while deleting the movie")
+        throw new ApiError(500, `Something went wrong while deleting the movie Message: ${error.message}`)
     }
 })
 
 const searchMovies = asyncHandler(async (req, res) => {
-  const { query, genreId, language, year } = req.query;
+  const { query, genre, language, year } = req.query;
 
   const pipeline = [];
 
-  // 🔍 Search (title + description)
+  // 🔍 Atlas Search
   if (query) {
     pipeline.push({
       $search: {
@@ -302,18 +318,19 @@ const searchMovies = asyncHandler(async (req, res) => {
     });
   }
 
-  // 🎛 Filters (handled AFTER search)
+  // 🎛 Filters
   const matchStage = {};
 
-  if (genreId) {
-    matchStage.genres = new mongoose.Types.ObjectId(genreId);
+  // genre is already ObjectId from client
+  if (genre && mongoose.Types.ObjectId.isValid(genre)) {
+    matchStage.genres = new mongoose.Types.ObjectId(genre);
   }
 
   if (language) {
-    matchStage.languages = language;
+    matchStage.languages = language.toLowerCase();
   }
 
-  if (year) {
+  if (year && !isNaN(year)) {
     matchStage.year = Number(year);
   }
 
@@ -321,27 +338,25 @@ const searchMovies = asyncHandler(async (req, res) => {
     pipeline.push({ $match: matchStage });
   }
 
-  
-
-  // 🎬 Final response
+  // 🎬 Projection
   pipeline.push({
     $project: {
       title: 1,
       thumbnail: 1,
       duration: 1,
       year: 1,
-      languages: 1,
-      score: query ? { $meta: "searchScore" } : 0
+      languages: 1
     }
   });
 
   const movies = await Movie.aggregate(pipeline);
 
-
   res.status(200).json(
     new ApiResponse(200, movies, "Movies fetched successfully")
   );
 });
+
+
 
 
 const autocompleteMovies = asyncHandler(async (req, res) => {
@@ -457,7 +472,31 @@ const removeFromWatchList = asyncHandler( async (req, res) => {
   }
 })
 
-export {topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList};
+
+const getWatchList = asyncHandler (async (req, res) => {
+ try {
+   const userid = req.user._id;
+   if (!userid) {
+     throw new ApiError(400, "User id is required");
+   }
+   const user = await User.findById(userid)
+     .populate("watchList", "thumbnail title duration year languages")
+     .select("watchList");
+   if (!user) {
+     throw new ApiError(404, "User not found");
+   }
+ 
+   res
+     .status(200)
+     .json(
+       new ApiResponse(200, { user }, "Fetched watch List successfully")
+     );
+ } catch (error) {
+   throw new ApiError(400, `Something went wrong while fetching the watchList Message: ${error.message}`)
+ }
+})
+
+export {topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList, getWatchList};
 
 
 

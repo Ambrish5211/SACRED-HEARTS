@@ -2,7 +2,7 @@ import { Movie } from "../models/movie.model.js";
 import { Rating } from "../models/rating.model.js";
 import { Genre } from "../models/genre.model.js";
 import { User } from "../models/user.model.js";
-import { ApiError } from "../utils/apiError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -14,7 +14,7 @@ import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 const topRatedMovies = asyncHandler(async (req, res) => {
   try {
     const topMovies = await Rating.aggregate([
-        // group by movies and take avg 
+      // group by movies and take avg 
       {
         $group: {
           _id: "$movieId",
@@ -62,14 +62,14 @@ const topRatedMovies = asyncHandler(async (req, res) => {
 
 const moviesList = asyncHandler(async (req, res) => {
   try {
-      const movies = await Movie.find().select("-owner -videoFile -description   ");
-       return res.status(200).json(
-        new ApiResponse(200, {
-            moviesList : movies
-        })
+    const movies = await Movie.find().select("-owner -videoFile -description   ");
+    return res.status(200).json(
+      new ApiResponse(200, {
+        moviesList: movies
+      })
     )
   } catch (error) {
-    throw new ApiError(500,`Something went wrong while retrieving all the movies ${error}`)
+    throw new ApiError(500, `Something went wrong while retrieving all the movies ${error}`)
   }
 });
 
@@ -77,126 +77,126 @@ const moviesList = asyncHandler(async (req, res) => {
 
 
 const movieById = asyncHandler(async (req, res) => {
-    try {
-        const id = req.params.id;
-        const movie = await Movie.findById(id).select("-owner")
-        const userid = req.user._id;
-        const user = await User.findById(userid);
-        if(!user){
-            throw new ApiError(404, "User not found")
-        }
-        if (!user.recentlyWatched.some(m => m.toString() === id)) {
-            user.recentlyWatched.unshift(id);
-            if (user.recentlyWatched.length > 3) user.recentlyWatched.pop();
-            await user.save();
-        }
-        
-        if(!movie){
-            throw new ApiError(404, "Movie not found")
-        }
-
-        const ratingStats = await Rating.aggregate([
-           { $match : { movieId : movie._id}},
-            {
-                $group: {
-                    _id : "$movie",
-                    avgRating: { $avg : "$rating"},
-                    totalRatings : {$sum:1}
-                }
-            }
-
-        ])
-
-         const { avgRating = 0, totalRatings = 0 } = ratingStats[0] || {};
-
-        return res
-        .status(200)
-        .json(
-            new ApiResponse(200, { movie, avgRating, totalRatings }, "Movie fetched successfully")
-        );
-    } catch (error) {
-        throw new ApiError(500, `Something went wrong while fetching the movie ${error}`)
+  try {
+    const id = req.params.id;
+    const movie = await Movie.findById(id).select("-owner")
+    const userid = req.user._id;
+    const user = await User.findById(userid);
+    if (!user) {
+      throw new ApiError(404, "User not found")
     }
+    if (!user.recentlyWatched.some(m => m.toString() === id)) {
+      user.recentlyWatched.unshift(id);
+      if (user.recentlyWatched.length > 3) user.recentlyWatched.pop();
+      await user.save();
+    }
+
+    if (!movie) {
+      throw new ApiError(404, "Movie not found")
+    }
+
+    const ratingStats = await Rating.aggregate([
+      { $match: { movieId: movie._id } },
+      {
+        $group: {
+          _id: "$movie",
+          avgRating: { $avg: "$rating" },
+          totalRatings: { $sum: 1 }
+        }
+      }
+
+    ])
+
+    const { avgRating = 0, totalRatings = 0 } = ratingStats[0] || {};
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, { movie, avgRating, totalRatings }, "Movie fetched successfully")
+      );
+  } catch (error) {
+    throw new ApiError(500, `Something went wrong while fetching the movie ${error}`)
+  }
 })
 
 const addMovie = asyncHandler(async (req, res) => {
-    try {
-        
-        const {  title, year } = req.body;
-        let {description} = req.body
-        const genres = JSON.parse(req.body.genres);
-        const languages = JSON.parse(req.body.languages);
+  try {
 
-        if (
-            [ title, description, year].some((field) => field?.trim() === "") || languages.length === 0
-          ) {
-            throw new ApiError(400, "All fields are required");
-          }
+    const { title, year } = req.body;
+    let { description } = req.body
+    const genres = JSON.parse(req.body.genres);
+    const languages = JSON.parse(req.body.languages);
 
-          const owner  = req.user._id;
-         
-
-        // remember that this req.files is updated in req by multer, so this is what multer does it accepts media files frontend, upload on the server itself..then we take those files path(it will be in public/temp) here and upload those files on cloudinary and then gets deleted in cloudinary code
-
-        const thumbnailServerPath = req.files?.thumbnail[0]?.path;
-        const movieServerPath = req.files?.videoFile[0]?.path;
-
-        if(!thumbnailServerPath) {
-            throw new ApiError(400, "Thumbnail is required")
-        }
-
-        if(!movieServerPath) {
-            throw new ApiError(400, "Movie path is required")
-        }
-
-        const thumbnail = await uploadOnCloudinary(thumbnailServerPath)
-        const movieUpload = await uploadOnCloudinary(movieServerPath)
-
-        if (!thumbnail || !movieUpload) {
-            throw new ApiError(400, "Failed to upload files to Cloudinary");
-          }
-
-
-        const durationInMinutes = movieUpload?.duration ? (movieUpload.duration) / 60 : 0;
-
-        description = title + ':' + description;
-      
-
-        const movie = await Movie.create({
-            title,
-            thumbnail: thumbnail.url,
-            videoFile: movieUpload.url ,
-            description,
-            languages,
-            genres,
-            owner,
-            year, 
-            duration: durationInMinutes,
-            
-        })
-
-        return res.status(201).json(
-            new ApiResponse(201, {
-                movie: movie,
-
-            },
-        "Movie added successfully")
-        )
-
-        
-    } catch (error) {
-        throw new ApiError(500, `Something went wrong while adding the movie ${error}`)
+    if (
+      [title, description, year].some((field) => field?.trim() === "") || languages.length === 0
+    ) {
+      throw new ApiError(400, "All fields are required");
     }
+
+    const owner = req.user._id;
+
+
+    // remember that this req.files is updated in req by multer, so this is what multer does it accepts media files frontend, upload on the server itself..then we take those files path(it will be in public/temp) here and upload those files on cloudinary and then gets deleted in cloudinary code
+
+    const thumbnailServerPath = req.files?.thumbnail[0]?.path;
+    const movieServerPath = req.files?.videoFile[0]?.path;
+
+    if (!thumbnailServerPath) {
+      throw new ApiError(400, "Thumbnail is required")
+    }
+
+    if (!movieServerPath) {
+      throw new ApiError(400, "Movie path is required")
+    }
+
+    const thumbnail = await uploadOnCloudinary(thumbnailServerPath)
+    const movieUpload = await uploadOnCloudinary(movieServerPath)
+
+    if (!thumbnail || !movieUpload) {
+      throw new ApiError(400, "Failed to upload files to Cloudinary");
+    }
+
+
+    const durationInMinutes = movieUpload?.duration ? (movieUpload.duration) / 60 : 0;
+
+    description = title + ':' + description;
+
+
+    const movie = await Movie.create({
+      title,
+      thumbnail: thumbnail.url,
+      videoFile: movieUpload.url,
+      description,
+      languages,
+      genres,
+      owner,
+      year,
+      duration: durationInMinutes,
+
+    })
+
+    return res.status(201).json(
+      new ApiResponse(201, {
+        movie: movie,
+
+      },
+        "Movie added successfully")
+    )
+
+
+  } catch (error) {
+    throw new ApiError(500, `Something went wrong while adding the movie ${error}`)
+  }
 })
 
 
 const updateMovieDetails = asyncHandler(async (req, res) => {
-    try {
-        const  movieId  = req.params.id;
-        const genres = req.body.genres ? JSON.parse(req.body.genres) : [];
-        const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
-        const { title, description, year } = req.body;
-        
+  try {
+    const movieId = req.params.id;
+    const genres = req.body.genres ? JSON.parse(req.body.genres) : [];
+    const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
+    const { title, description, year } = req.body;
+
 
     if (!movieId) {
       throw new ApiError(400, "Movie ID is required");
@@ -225,7 +225,7 @@ const updateMovieDetails = asyncHandler(async (req, res) => {
       if (movie.videoFile) await deleteOnCloudinary(movie.videoFile);
       const newVideo = await uploadOnCloudinary(newVideoPath);
       movie.videoFile = newVideo.url;
-      movie.duration = newVideo.duration / 60; 
+      movie.duration = newVideo.duration / 60;
     }
 
     await movie.save();
@@ -233,28 +233,28 @@ const updateMovieDetails = asyncHandler(async (req, res) => {
     return res.status(200).json(
       new ApiResponse(200, { movie }, "Movie updated successfully")
     );
-        
-    } catch (error) {
-        throw new ApiError(500, `Something went wrong while updating the fields ${error} `)
-    }
+
+  } catch (error) {
+    throw new ApiError(500, `Something went wrong while updating the fields ${error} `)
+  }
 })
 
 
 const deleteMovie = asyncHandler(async (req, res) => {
-    try {
-        const id = req.params.id;
-        const movie = await Movie.findById(id);
-        if(!movie){
-            throw new ApiError(404, "Movie not found")
-        }
-    
-        const thumbnailPublicId = movie.thumbnail?.public_id;
-        const videoFilePublicId = movie.videoFile?.public_id;
-    
-        await deleteOnCloudinary(thumbnailPublicId);
-        await deleteOnCloudinary(videoFilePublicId, "video");
-    
-         await Rating.deleteMany({ movieId: id });
+  try {
+    const id = req.params.id;
+    const movie = await Movie.findById(id);
+    if (!movie) {
+      throw new ApiError(404, "Movie not found")
+    }
+
+    const thumbnailPublicId = movie.thumbnail?.public_id;
+    const videoFilePublicId = movie.videoFile?.public_id;
+
+    await deleteOnCloudinary(thumbnailPublicId);
+    await deleteOnCloudinary(videoFilePublicId, "video");
+
+    await Rating.deleteMany({ movieId: id });
 
     await User.updateMany(
       {
@@ -270,19 +270,19 @@ const deleteMovie = asyncHandler(async (req, res) => {
         }
       }
     );
-    
-        await Movie.findByIdAndDelete(id)
 
-        res.
-        status(204)
-        .json(
-            new ApiResponse(200,{}
-            , "Movie Deleted Successfully")
-        )
-    
-    } catch (error) {
-        throw new ApiError(500, `Something went wrong while deleting the movie Message: ${error.message}`)
-    }
+    await Movie.findByIdAndDelete(id)
+
+    res.
+      status(204)
+      .json(
+        new ApiResponse(200, {}
+          , "Movie Deleted Successfully")
+      )
+
+  } catch (error) {
+    throw new ApiError(500, `Something went wrong while deleting the movie Message: ${error.message}`)
+  }
 })
 
 const searchMovies = asyncHandler(async (req, res) => {
@@ -398,105 +398,105 @@ const autocompleteMovies = asyncHandler(async (req, res) => {
 
 
 
-const addToWatchList = asyncHandler (async (req, res) => {
- try {
-   const movieId = req.params.id;
-   const userId = req.user._id;
- 
-   const user = await User.findById(userId);
-   const movie = await Movie.findById(movieId);
+const addToWatchList = asyncHandler(async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const userId = req.user._id;
 
-   if(!movie){
-    throw new ApiError(404, "Movie not found");
-   }
+    const user = await User.findById(userId);
+    const movie = await Movie.findById(movieId);
 
-   if(!user){
-     throw new ApiError(404, "User not found");
-   }
- 
-   if (user.watchList.some(id => id.toString() === movieId)) {
-    throw new ApiError(400, "Movie already exists in watchlist");
-  } 
- 
-   if(user.watchList.length === 20) user.watchList.pop();
- 
-   user.watchList.unshift(movieId);
+    if (!movie) {
+      throw new ApiError(404, "Movie not found");
+    }
 
-   await user.save();
- 
-   return res.status(200).json(
-     new ApiResponse(200, `Movie added to watchList successfully`)
-   )
- } catch (error) {
-   throw new ApiError(400, `Something went wrong while adding the movie to watchList. Message:  ${error.message}`);
- }
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (user.watchList.some(id => id.toString() === movieId)) {
+      throw new ApiError(400, "Movie already exists in watchlist");
+    }
+
+    if (user.watchList.length === 20) user.watchList.pop();
+
+    user.watchList.unshift(movieId);
+
+    await user.save();
+
+    return res.status(200).json(
+      new ApiResponse(200, `Movie added to watchList successfully`)
+    )
+  } catch (error) {
+    throw new ApiError(400, `Something went wrong while adding the movie to watchList. Message:  ${error.message}`);
+  }
 
 })
 
 
-const removeFromWatchList = asyncHandler( async (req, res) => {
-  
+const removeFromWatchList = asyncHandler(async (req, res) => {
+
   try {
     const movieId = req.params.id;
     const userid = req.user._id;
-  
+
     const user = await User.findById(userid);
     const movie = await Movie.findById(movieId);
 
-    if(!movie){
+    if (!movie) {
       throw new ApiError(404, 'Movie not found');
     }
 
-    if(!user){
+    if (!user) {
       throw new ApiError(404, 'User not found');
     }
-  
+
     const originalLength = user.watchList.length;
-  
+
     user.watchList = user.watchList.filter(
       id => id.toString() !== movieId
     );
-  
+
     if (user.watchList.length === originalLength) {
       throw new ApiError(400, "Movie not found in watchlist");
     }
-  
+
     await user.save();
-  
+
     return res.status(200).json(
       new ApiResponse(200, null, "Movie removed from watchlist successfully")
     );
-  
+
   } catch (error) {
-     throw new ApiError(400, `Something went wrong while removing from watchList. Message: ${error.message}`)
+    throw new ApiError(400, `Something went wrong while removing from watchList. Message: ${error.message}`)
   }
 })
 
 
-const getWatchList = asyncHandler (async (req, res) => {
- try {
-   const userid = req.user._id;
-   if (!userid) {
-     throw new ApiError(400, "User id is required");
-   }
-   const user = await User.findById(userid)
-     .populate("watchList", "thumbnail title duration year languages")
-     .select("watchList");
-   if (!user) {
-     throw new ApiError(404, "User not found");
-   }
- 
-   res
-     .status(200)
-     .json(
-       new ApiResponse(200, { user }, "Fetched watch List successfully")
-     );
- } catch (error) {
-   throw new ApiError(400, `Something went wrong while fetching the watchList Message: ${error.message}`)
- }
+const getWatchList = asyncHandler(async (req, res) => {
+  try {
+    const userid = req.user._id;
+    if (!userid) {
+      throw new ApiError(400, "User id is required");
+    }
+    const user = await User.findById(userid)
+      .populate("watchList", "thumbnail title duration year languages")
+      .select("watchList");
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, { user }, "Fetched watch List successfully")
+      );
+  } catch (error) {
+    throw new ApiError(400, `Something went wrong while fetching the watchList Message: ${error.message}`)
+  }
 })
 
-export {topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList, getWatchList};
+export { topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList, getWatchList };
 
 
 
@@ -513,6 +513,6 @@ export {topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, del
 
 // how to handle genre -  make an api call to get all genre on add movie page and send selected genre and accept in adding movies controller
 
-// watchlist feature - DONE 
-// add redis for caching - recently watch, top rated 
+// watchlist feature - DONE
+// add redis for caching - recently watch, top rated
 // search and filter using mongoDB atlas search later DONE

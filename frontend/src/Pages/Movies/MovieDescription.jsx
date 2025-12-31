@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaDownload, FaPlus, FaArrowLeft, FaPlay, FaRegStar, FaCheck, FaStar } from "react-icons/fa";
-import { getMovieById } from "../../redux/slices/movieSlice";
 import { addToWatchList, removeFromWatchList } from "../../redux/slices/authSlice";
 import axiosInstance from "../../config/axiosInstance";
 import HomeLayout from "../../Layouts/HomeLayout";
@@ -16,25 +15,35 @@ export default function MovieDescription() {
   const playerContainerRef = useRef(null);
   const playerRef = useRef(null);
 
-  const { currentMovie } = useSelector((state) => state.movie);
+  // Removed movie slice selector
   const { watchList, isLoggedIn } = useSelector((state) => state.auth);
+  const { genres: apiGenres } = useSelector((state) => state.genre) || { genres: [] };
 
+  const [currentMovie, setCurrentMovie] = useState(null);
   const [playing, setPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [showRatingUI, setShowRatingUI] = useState(false);
   const [userRating, setUserRating] = useState(0);
 
   useEffect(() => {
-    if (id) {
-      dispatch(getMovieById(id));
+    async function fetchMovie() {
+      try {
+        const response = await axiosInstance.get(`/movies/${id}`);
+        if (response?.data?.success) {
+          setCurrentMovie(response.data.data);
+        }
+      } catch (error) {
+        toast.error("Failed to load movie details");
+      }
     }
-  }, [id, dispatch]);
+    if (id) {
+      fetchMovie();
+    }
+  }, [id]);
 
   const movieData = currentMovie?.movie;
-  // Fallback if data structure is different (handled in previous turns by user edits, but let's be safe)
-  // User had changed it to currentMovie.movie. So I stick with that.
-
-  const trailer = movieData ? `${movieData.videoFile} ` : "";
-  const trailerSource = trailer ? `${trailer}?f_auto=mp4` : "";
+  const trailer = movieData?.videoFile || "";
+  const trailerSource = trailer ? `${trailer.trim()}?f_auto=mp4` : "";
   const thumbnail = movieData?.thumbnail;
   const title = movieData?.title;
   const description = movieData?.description;
@@ -42,11 +51,7 @@ export default function MovieDescription() {
   const avgRating = currentMovie?.avgRating;
 
   // Logic to check if movie is in watchlist
-  // Assuming watchList contains objects with _id or valid comparisons
   const isAdded = watchList?.some((movie) => (movie._id === id) || (movie === id));
-  // Safety check: watchList might be ids or objects. Backend usually populates.
-  // If populates: movie._id. If not: movie (string). 
-  // I'll check both.
 
   const handleWatchList = async () => {
     if (!isLoggedIn) {
@@ -75,7 +80,15 @@ export default function MovieDescription() {
       await axiosInstance.post("/rating/add", { movieId: id, rating: ratingValue });
       toast.success("Rating submitted!");
       setShowRatingUI(false);
-      dispatch(getMovieById(id)); // Refresh data to update avg rating
+
+      // Manually refresh data if needed or just notify
+      // To keep it simple, we might not need to refetch immediately or we can extract fetch logic. 
+      // For now, let's just leave it as is or trigger a re-mount if absolutely needed, but usually rating update doesn't need immediate UI refresh of anything other than stars.
+      // If we really want to update avgRating, we need to fetch again.
+      const response = await axiosInstance.get(`/movies/${id}`);
+      if (response?.data?.success) {
+        setCurrentMovie(response.data.data);
+      }
     } catch (error) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Failed to submit rating");
@@ -94,14 +107,14 @@ export default function MovieDescription() {
     }
     return `${hrs}h ${mins}m`;
   }
+
   const formattedDuration = formatDuration(movieData?.duration);
-
   const language = movieData?.language ? (Array.isArray(movieData.language) ? movieData.language.join(", ") : movieData.language) : "English";
-
   const rawGenres = movieData?.genres || movieData?.genre || [];
   const genres = Array.isArray(rawGenres) ? rawGenres : [rawGenres];
 
   const handleDownload = async () => {
+    // ... existing implementation
     if (!movieData) return;
     try {
       const link = document.createElement("a");
@@ -117,18 +130,34 @@ export default function MovieDescription() {
   };
 
   const handleWatchNow = () => {
-    setPlaying(true);
+    setHasStarted(true); // Ensure overlay is gone
+    setPlaying(true);    // Start playing
+
+    // Smooth scroll to player
     if (playerContainerRef.current) {
       playerContainerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-
-      const el = playerContainerRef.current;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
+
+    // Attempt to fullscreen the VIDEO element specifically (to match native behavior)
+    setTimeout(() => {
+      const internalPlayer = playerRef.current?.getInternalPlayer();
+      const videoElement = internalPlayer || playerContainerRef.current?.querySelector('video');
+
+      if (videoElement) {
+        if (videoElement.requestFullscreen) videoElement.requestFullscreen();
+        else if (videoElement.webkitRequestFullscreen) videoElement.webkitRequestFullscreen();
+        else if (videoElement.msRequestFullscreen) videoElement.msRequestFullscreen();
+      }
+    }, 100); // Small delay to ensure render updates if needed
+  };
+
+  const handleOverlayPlay = () => {
+    setHasStarted(true);
+    setPlaying(true);
   };
 
   if (!movieData) {
+    // ... existing loading
     return (
       <HomeLayout>
         <div className="flex justify-center items-center min-h-screen bg-[#141414] text-white">
@@ -140,19 +169,10 @@ export default function MovieDescription() {
 
   return (
     <HomeLayout>
-      {/* Reduced Top/Horizontal Spacing: pt-4 px-2 */}
-      <div className="w-full min-h-screen bg-[#141414] relative text-white flex flex-col pt-6 px-1 md:px-6 pb-10">
+      <div className="w-full min-h-screen bg-[#141414] relative text-white flex flex-col pt-14 px-1 md:px-6 pb-10">
 
         <div className="max-w-[1400px] mx-auto w-full">
-          {/* Back Button - Aligned */}
-          <button
-            onClick={() => navigate(-1)}
-            className="self-start mb-1 text-zinc-400 hover:text-white transition-colors flex items-center gap-2 font-medium"
-          >
-            <FaArrowLeft className="text-sm" /> Back to Browse
-          </button>
-
-          {/* Grid Layout: Player Left (2 cols), Thumbnail Right (1 col) - Resized for smaller player & more gap */}
+          {/* Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
             {/* LEFT COLUMN: Player + Details */}
@@ -160,8 +180,25 @@ export default function MovieDescription() {
               {/* Video Player */}
               <div
                 ref={playerContainerRef}
-                className="w-full aspect-video rounded-xl overflow-hidden shadow-2xl bg-black border border-zinc-800 relative z-10"
+                className="w-full aspect-video rounded-xl overflow-hidden shadow-2xl bg-black border border-zinc-800 relative z-10 group"
               >
+                {/* Custom Thumbnail Overlay (mimics light mode) */}
+                {!hasStarted && (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-black">
+                    <img
+                      src={thumbnail}
+                      alt="Video Thumbnail"
+                      className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    />
+                    <button
+                      onClick={handleOverlayPlay}
+                      className="relative z-30 bg-yellow-500 text-black rounded-full p-6 hover:scale-110 transition-transform shadow-lg shadow-yellow-500/20"
+                    >
+                      <FaPlay size={32} />
+                    </button>
+                  </div>
+                )}
+
                 <ReactPlayer
                   ref={playerRef}
                   url={trailerSource}
@@ -169,16 +206,12 @@ export default function MovieDescription() {
                   height="100%"
                   controls={true}
                   playing={playing}
-                  light={thumbnail}
-                  playIcon={
-                    <button
-                      onClick={() => setPlaying(true)}
-                      className="bg-yellow-500 text-black rounded-full p-4 hover:scale-110 transition-transform"
-                    >
-                      <FaPlay size={24} />
-                    </button>
-                  }
-                  onClickPreview={() => setPlaying(true)}
+                  // Removed light prop to keep video element in DOM
+                  onPlay={() => {
+                    setHasStarted(true);
+                    setPlaying(true);
+                  }}
+                  onPause={() => setPlaying(false)}
                 />
               </div>
 
@@ -213,11 +246,24 @@ export default function MovieDescription() {
                     <>
                       <span className="w-1 h-1 rounded-full bg-zinc-600"></span>
                       <div className="flex flex-wrap gap-2">
-                        {genres.map((g, idx) => (
-                          <span key={idx} className="px-3 py-1 text-xs font-bold text-zinc-300 bg-zinc-800/80 rounded-full border border-zinc-700">
-                            {g?.name || g?.title || g}
-                          </span>
-                        ))}
+                        {genres.map((g, idx) => {
+                          // Resolve genre name: Handle object, ID string, or Name string
+                          let genreName = g;
+                          if (typeof g === 'object') {
+                            genreName = g?.name || g?.title || "Unknown";
+                          } else if (typeof g === 'string') {
+                            // Try to find by ID
+                            const match = apiGenres?.find(ag => ag._id === g);
+                            if (match) genreName = match.name;
+                            // Else it might be a name already, leave as is
+                          }
+
+                          return (
+                            <span key={idx} className="px-3 py-1 text-xs font-bold text-zinc-300 bg-zinc-800/80 rounded-full border border-zinc-700">
+                              {genreName}
+                            </span>
+                          );
+                        })}
                       </div>
                     </>
                   )}

@@ -1,229 +1,190 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Typewriter from "typewriter-effect";
 import HomeLayout from "../Layouts/HomeLayout";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axiosInstance from "../config/axiosInstance";
+import MoviesCard from "../Components/MoviesCard";
 import hero from "../assets/hero-bg.jpg";
-import hero2 from "../assets/top-rated-bg.jpg";
 import hero3 from "../assets/cta-bg.jpg";
-import bossbabyImg from "../assets/the-boss-baby.jpg";
-import interstellarImg from "../assets/interstellar.jpg";
-import hobbitImg from "../assets/hobbit.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  const [recentlyWatched, setRecentlyWatched] = useState([]);
+  const [topRatedMovies, setTopRatedMovies] = useState([]);
+
+  useEffect(() => {
+    // Top Rated (Public)
+    (async () => {
+      try {
+        const res = await axiosInstance.get("/movies/top-rated-movies");
+        if (res?.data?.success) {
+          setTopRatedMovies(res.data.data || []);
+        }
+      } catch (error) {
+        console.log("Failed to fetch top rated movies", error);
+      }
+    })();
+
+    // Recently Watched (Private)
+    if (isLoggedIn) {
+      (async () => {
+        try {
+          const res = await axiosInstance.get("/users/recently-watched");
+          if (res?.data?.success) {
+            // Adjust according to the API response structure observed in logs
+            // Assuming res.data.data.user.recentlyWatched based on previous user correction
+            setRecentlyWatched(res.data.data.user.recentlyWatched || []);
+          }
+        } catch (error) {
+          console.log("Failed to fetch recently watched", error);
+        }
+      })();
+    }
+  }, [isLoggedIn]);
 
   return (
-    <>
-      <HomeLayout>
-        <main
-          className="max-w-screen"
-          style={{
-            backgroundImage: `url(${hero})`,
-            backgroundSize: "cover",
-          }}
-        >
-          <section className="mx-auto flex h-screen max-w-[85rem] items-center ">
-            <div className="  p-2  text-stone-200 sm:pt-6 ">
-              <h1 className="max-w-md text-center text-4xl font-semibold sm:text-left sm:text-5xl">
-                <span className="mb-2 font-bold text-yellow-500">
-                  <Typewriter
-                    options={{
-                      strings: ["Discover", "Download"],
-                      autoStart: true,
-                      loop: true,
-                    }}
-                  />
-                </span>
-                BLOCKBUSTER
-              </h1>
-              <p className="max-w- mt-6 text-center text-xl text-slate-50 sm:text-left sm:text-xl">
-                Movie Magic Anytime, Anywhere—Your Ultimate Gateway to
-                Entertainment <br /> Delight!
-              </p>
-              <p className=" hidden max-w-md text-center text-xl sm:block  sm:text-left">
-                Unlock the Cinematic Universe: Stream, Download, and Dive
-                into...
-              </p>
-              <div className="mt-6 flex justify-center space-x-6 sm:justify-start">
-                <Link to="/movies">
-                  <button className="  cursor-pointer rounded-md bg-yellow-500 px-3  py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600 lg:px-5 lg:py-3 ">
-                    <span className=" hidden lg:inline-block">Explore</span>{" "}
-                    Movies
-                  </button>
-                </Link>
-                <Link to="/contact">
-                  <button className="cursor-pointer rounded-md border border-yellow-500 px-5 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-yellow-600">
-                    Contact <span className="hidden lg:inline-block">Us</span>
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <main
-          className="max-w-screen"
-          style={{
-            backgroundImage: `url(${hero2})`,
-            backgroundSize: "cover",
-          }}
-        >
-          <section className="max-w-7.2xl mx-auto p-12">
-            <div className="text-center">
-              <p className="mb-3 mt-9 text-xs font-semibold text-yellow-500">
-                ONLINE STREAMING
-              </p>
-              <h1 className="mb-20 text-4xl font-extrabold uppercase text-slate-100">
-                Top Rated Movies
-              </h1>
-            </div>
-            <div className="my-12 flex flex-wrap  items-center justify-between gap-8 sm:px-10 ">
-              {/* FIRST MOVIE */}
-
-              <div
-                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
-                onClick={() => navigate(`/movies`)}
-              >
-                <img
-                  alt="Interstellar"
-                  src={interstellarImg}
-                  className="group:hover:scale=[1,2] h-64 w-full rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
+    <HomeLayout>
+      {/* HERO SECTION */}
+      <main
+        className="max-w-screen h-screen relative"
+        style={{
+          backgroundImage: `url(${hero})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#141414]"></div>
+        <section className="relative mx-auto flex h-full max-w-[85rem] items-center px-6">
+          <div className="p-2 text-stone-200 sm:pt-6">
+            <h1 className="max-w-2xl text-center text-4xl font-semibold sm:text-left sm:text-6xl leading-tight">
+              <span className="mb-2 font-bold text-yellow-500 block">
+                <Typewriter
+                  options={{
+                    strings: ["Discover.", "Stream.", "Experience."],
+                    autoStart: true,
+                    loop: true,
+                  }}
                 />
-                <div className="space-y-3 p-3 text-white ">
-                  <h2 className=" line-clamp-2 text-center text-2xl font-bold uppercase text-yellow-500 ">
-                    Interstellar
-                  </h2>
-                  <p className="mt-1 line-clamp-2 font-semibold">
-                    Directed By:
-                    <span className="font-bold text-yellow-500">
-                      {" "}
-                      Christopher Nolan
-                    </span>
-                  </p>
-                  <p className=" font-semibold sm:inline-block">
-                    Duration: 
-                    <span className=" font-bold text-yellow-500 sm:inline-block">
-                      {" "}
-                       2h 49min
-                    </span>
-                  </p>
-                  <p className=" font-semibold ">
-                    Genre:
-                    <span className="font-bold text-yellow-500"> SCiFI</span>
-                  </p>
-                </div>
-              </div>
+              </span>
+              UNLIMITED ENTERTAINMENT
+            </h1>
+            <p className="mt-6 max-w-xl text-center text-lg text-slate-300 sm:text-left sm:text-2xl font-light">
+              Your gateway to the cinematic universe. Watch the latest blockbuster movies anytime, anywhere.
+            </p>
 
-              {/* SECOND MOVIE */}
-
-              <div
-                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
-                onClick={() => navigate(`/movies`)}
-              >
-                <img
-                  alt="thebossbaby"
-                  src={bossbabyImg}
-                  className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
-                />
-                <div className="space-y-3 p-3 text-white ">
-                  <h2 className=" line-clamp-2 text-center text-2xl font-bold uppercase text-yellow-500 ">
-                    The Boss Baby
-                  </h2>
-                  <p className="mt-1 line-clamp-2 font-semibold">
-                    Directed By:
-                    <span className="font-bold text-yellow-500">
-                      {" "}
-                      Tom McGrath
-                    </span>
-                  </p>
-                  <p className=" font-semibold sm:inline-block">
-                    Duration:
-                    <span className=" font-bold text-yellow-500 sm:inline-block">
-                      {" "}
-                       1h 39min
-                    </span>
-                  </p>
-                  <p className=" font-semibold">
-                    Genre:
-                    <span className="font-bold text-yellow-500"> Comedy</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* THIRD  MOVIE */}
-
-              <div
-                className="h-[430px] w-[22rem] transform cursor-pointer overflow-hidden rounded-lg bg-zinc-700 text-white shadow-lg transition-transform ease-in-out hover:scale-105 "
-                onClick={() => navigate(`/movies`)}
-              >
-                <img
-                  alt="thehobbit"
-                  src={hobbitImg}
-                  className="group:hover:scale=[1,2] h-64 w-full  rounded-tl-lg rounded-tr-lg transition-all duration-300 ease-in-out"
-                />
-                <div className="space-y-3 p-3 text-white ">
-                  <h2 className=" line-clamp-2 text-center text-2xl font-bold uppercase text-yellow-500 ">
-                    The Hobbit
-                  </h2>
-                  <p className="mt-1 line-clamp-2 font-semibold">
-                    Directed By:
-                    <span className="font-bold text-yellow-500">
-                      {" "}
-                      Peter Jackson
-                    </span>
-                  </p>
-                  <p className=" font-semibold sm:inline-block">
-                    Duration:
-                    <span className=" font-bold text-yellow-500 sm:inline-block">
-                      {" "}
-                       2h 38min
-                    </span>
-                  </p>
-                  <p className="font-semibold">
-                    Genre:
-                    <span className="font-bold text-yellow-500">
-                      {" "}
-                      Adventure
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <main
-          className="max-w-screen"
-          style={{
-            backgroundImage: `url(${hero3})`,
-            backgroundSize: "cover",
-          }}
-        >
-          <div className="mx-auto grid max-w-7xl gap-6 py-12 sm:grid-cols-2 sm:gap-0">
-            <div className="flex items-start justify-center sm:flex-col">
-              <h1 className="text-xl font-bold uppercase text-stone-800 sm:text-3xl sm:font-extrabold">
-                NEVER MISS AN UPDATE FROM US.
-              </h1>
-              <h2 className="mt-1 hidden font-semibold text-black sm:block">
-                Enter your email to get started with us.
-              </h2>
-            </div>
-            <div className="flex items-center justify-center">
-              <div className="sm:relative ">
-                <input
-                  placeholder="Enter your email..."
-                  type="email"
-                  className="h-8 w-[14rem] rounded-md bg-white px-4 font-semibold text-slate-800 shadow-md sm:h-12 sm:w-[28rem] "
-                />
-                <button className="sm:bold right-0 ml-2 h-8 w-16 rounded-md bg-black p-2 text-xs font-semibold text-yellow-400 transition ease-in-out hover:bg-yellow-500 hover:text-white sm:absolute sm:ml-0 sm:h-12 sm:w-24">
-                  <span className="hidden sm:block">GET STARTED</span>
-                  <span className="sm:hidden">Subscribe</span>
+            <div className="mt-8 flex justify-center space-x-6 sm:justify-start">
+              <Link to="/movies">
+                <button className="cursor-pointer rounded-full bg-yellow-500 px-8 py-3 text-lg font-bold text-black transition-all duration-300 hover:bg-yellow-400 hover:scale-105 shadow-lg shadow-yellow-500/30">
+                  Explore Movies
                 </button>
-              </div>
+              </Link>
             </div>
           </div>
-        </main>
-      </HomeLayout>
-    </>
+        </section>
+      </main>
+
+      {/* CONTENT SECTIONS */}
+      <div className="bg-[#141414] min-h-screen pb-20 relative z-10 space-y-24">
+
+        {/* RECENTLY WATCHED SECTION */}
+        {isLoggedIn && recentlyWatched.length > 0 && (
+          <section className="max-w-[85rem] mx-auto px-6 pt-10">
+            <div className="text-center mb-16">
+              <p className="mb-3 text-xs font-semibold text-yellow-500 uppercase tracking-widest">
+                Jump Back In
+              </p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wider inline-block border-b-4 border-yellow-500 pb-4">
+                Continue Watching
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap justify-center lg:justify-between gap-10">
+              {recentlyWatched.slice(0, 3).map((movie) => (
+                <div key={movie._id} className="transform hover:scale-105 transition-transform duration-300">
+                  <MoviesCard data={movie} />
+                </div>
+              ))}
+              {/* Alignment Fillers for 3-column grid consistency */}
+              {recentlyWatched.length < 3 && Array(3 - recentlyWatched.length).fill(0).map((_, i) => (
+                <div key={`filler-${i}`} className="w-[18rem] sm:w-[22rem] hidden lg:block h-0"></div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* TOP RATED SECTION */}
+        <section className={`max-w-[85rem] mx-auto px-6 ${!isLoggedIn || recentlyWatched.length === 0 ? "pt-10" : ""}`}>
+          <div className="text-center mb-16">
+            <p className="mb-3 text-xs font-semibold text-yellow-500 uppercase tracking-widest">
+              Online Streaming
+            </p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wider inline-block border-b-4 border-yellow-500 pb-4">
+              Top Rated Hits
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap justify-center lg:justify-between gap-10">
+            {topRatedMovies && topRatedMovies.length > 0 ? (
+              topRatedMovies.slice(0, 3).map((movie) => (
+                <div key={movie._id} className="transform hover:scale-105 transition-transform duration-300">
+                  <MoviesCard data={movie} />
+                </div>
+              ))
+            ) : (
+              <p className="text-zinc-500 text-lg w-full text-center">Loading top rated movies...</p>
+            )}
+            {/* Alignment Fillers */}
+            {topRatedMovies.length > 0 && topRatedMovies.length < 3 && Array(3 - topRatedMovies.length).fill(0).map((_, i) => (
+              <div key={`filler-tr-${i}`} className="w-[18rem] sm:w-[22rem] hidden lg:block h-0"></div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-16">
+            <Link to="/movies?sort=rating">
+              <button className="px-10 py-4 rounded-full border-2 border-yellow-500 text-yellow-500 font-bold hover:bg-yellow-500 hover:text-black transition-all duration-300 uppercase tracking-widest shadow-lg hover:shadow-yellow-500/20">
+                View All Top Rated
+              </button>
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      {/* CTA SECTION */}
+      <main
+        className="max-w-screen relative"
+        style={{
+          backgroundImage: `url(${hero3})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/70"></div>
+        <div className="relative mx-auto grid max-w-7xl gap-6 py-20 px-6 sm:grid-cols-2 sm:gap-0 items-center">
+          <div className="flex flex-col items-start justify-center">
+            <h1 className="text-3xl font-extrabold uppercase text-white sm:text-4xl">
+              Stay Updated
+            </h1>
+            <h2 className="mt-2 text-lg text-zinc-300 font-medium">
+              Join our community and never miss a new release.
+            </h2>
+          </div>
+          <div className="flex items-center justify-center sm:justify-end w-full">
+            <div className="w-full max-w-md relative flex">
+              <input
+                placeholder="Enter your email address"
+                type="email"
+                className="w-full rounded-l-md bg-white/10 backdrop-blur-sm border border-zinc-600 px-6 py-4 text-white placeholder-zinc-400 focus:outline-none focus:border-yellow-500 transition-colors"
+              />
+              <button className="rounded-r-md bg-yellow-500 px-6 py-4 font-bold text-black transition hover:bg-yellow-400">
+                SUBSCRIBE
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </HomeLayout>
   );
 }

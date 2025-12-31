@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { logoutSuccess } from "../redux/slices/authSlice";
+import { logout } from "../redux/slices/authSlice";
+import { getAllGenres } from "../redux/slices/genreSlice";
 import Footer from "../Components/Footer/Footer";
+import SearchBar from "../Components/SearchBar";
 
 function HomeLayout({ children }) {
   const dispatch = useDispatch();
@@ -13,6 +16,14 @@ function HomeLayout({ children }) {
 
   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
   const isAdmin = useSelector((state) => state?.auth?.isAdmin);
+  const { genres } = useSelector((state) => state.genre) || { genres: [] };
+
+  useEffect(() => {
+    // Fetch genres if not already loaded (optional check, but good for perf)
+    if (!genres || genres.length === 0) {
+      dispatch(getAllGenres());
+    }
+  }, [dispatch, genres?.length]);
 
   function changeWidth() {
     const drawerSide = document.getElementsByClassName("drawer-side");
@@ -30,7 +41,7 @@ function HomeLayout({ children }) {
   async function onLogout(e) {
     e.preventDefault();
 
-    const response = await dispatch(logoutSuccess());
+    const response = await dispatch(logout());
     if (response) navigate("/");
   }
 
@@ -50,29 +61,7 @@ function HomeLayout({ children }) {
           {/* Search and Filter Section */}
           {!hideSearch && (
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-300 pointer-events-none"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="bg-zinc-800 text-white placeholder-gray-400 rounded-full pl-10 pr-10 py-2 w-48 focus:w-64 transition-all duration-300 outline-none border border-transparent focus:border-yellow-500 focus:bg-zinc-900"
-                />
-
-                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-zinc-700 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                </button>
-              </div>
+              <SearchBar />
             </div>
           )}
         </div>
@@ -101,6 +90,12 @@ function HomeLayout({ children }) {
             {isLoggedIn && isAdmin && (
               <li>
                 <Link to="/admin/addmovie"> Add Movie </Link>
+              </li>
+            )}
+
+            {isLoggedIn && isAdmin && (
+              <li>
+                <Link to="/admin/addgenre"> Add Genre </Link>
               </li>
             )}
 

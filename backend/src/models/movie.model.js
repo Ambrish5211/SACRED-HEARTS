@@ -33,7 +33,8 @@ const movieSchema = new Schema(
     languages: [
       {
         type: String,
-        required: true
+        required: true, 
+        lowercase: true
       }
     ],
     genres:[

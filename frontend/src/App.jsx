@@ -7,8 +7,20 @@ import MoviesList from "./Pages/Movies/MoviesList";
 import MovieDescription from "./Pages/Movies/MovieDescription";
 import Notfound from "./Pages/NotFound";
 import RequireAuth from "./Components/RequireAuth";
+import AddMovie from "./Pages/Movies/AddMovie";
+import AddGenre from "./Pages/Movies/AddGenre";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getUser } from "./redux/slices/authSlice";
+import WatchList from "./Pages/User/WatchList"; // Import WatchList
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
   return (
     <Routes>
       <Route path="/" element={<Home />}></Route>
@@ -20,6 +32,10 @@ function App() {
           path="/movies/description/:id"
           element={<MovieDescription />}
         ></Route>
+        <Route path="/user/watchlist" element={<WatchList />} />
+        <Route path="/admin/addmovie" element={<AddMovie />} />
+        <Route path="/admin/editmovie/:id" element={<AddMovie />} />
+        <Route path="/admin/addgenre" element={<AddGenre />} />
       </Route>
       <Route path="*" element={<Notfound />}></Route>
     </Routes>

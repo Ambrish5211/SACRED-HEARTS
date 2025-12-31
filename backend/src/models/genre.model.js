@@ -4,7 +4,8 @@ const genreSchema = new Schema(
     {
         name: {
             type: String, 
-            required: true
+            required: true,
+            lowercase: true
         }
     },
     {

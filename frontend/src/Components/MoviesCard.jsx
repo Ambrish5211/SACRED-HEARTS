@@ -1,15 +1,17 @@
 
 import { useNavigate } from "react-router-dom";
-import { FaPlay, FaPlus, FaCheck } from "react-icons/fa";
+import { FaPlay, FaPlus, FaCheck, FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWatchList, removeFromWatchList } from "../redux/slices/authSlice";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast"; // Ensure this is imported
+import axiosInstance from "../config/axiosInstance"; // Ensure this is imported
 
-function MoviesCard({ data }) {
+function MoviesCard({ data, onDelete }) {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const { watchList, isLoggedIn } = useSelector((state) => state.auth);
+  const { watchList, isLoggedIn, isAdmin } = useSelector((state) => state.auth);
+  const { genres: apiGenres } = useSelector((state) => state.genre) || { genres: [] };
 
   const isAdded = watchList?.some((movie) => (movie._id === data?._id) || (movie === data?._id));
 
@@ -26,20 +28,33 @@ function MoviesCard({ data }) {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this movie?")) return;
+    try {
+      const response = await axiosInstance.delete(`/movies/delete-movie/${data._id}`);
+      if (response?.data?.success) {
+        toast.success("Movie deleted successfully");
+        // Refresh logic
+        if (window.location.pathname === "/movies") {
+          window.location.reload();
+        } else {
+          navigate("/movies");
+        }
+        // If parent provided onDelete callback
+        if (onDelete) onDelete(data._id);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to delete movie");
+    }
+  }
+
   function formatDuration(duration) {
     if (!duration) return "N/A";
     const num = Number(duration);
     if (isNaN(num)) return duration;
 
-    // User requested logic: 2.445 -> 2 hr 44 min
-    // Assuming decimal part represents minutes directly if the user's example is to be taken literally
-    // Or standard decimal hours. Let's try standard decimal first, but if the user specifically cited 2.445 -> 44, 
-    // they might be storing data as H.MM. 
-    // If I treat 2.445 as H.MM -> 2h 44m (taking first 2 decimal digits)
-
     const hrs = Math.floor(num);
-    // If we treat .445 as 44.5 minutes? Or 0.445 * 60?
-    // "durations if 2.445 then add 2 hr 44 min" -> This strongly suggests treating digits after decimal as minutes.
     const decimalPart = num.toString().split('.')[1];
     let mins = 0;
     if (decimalPart) {
@@ -50,7 +65,7 @@ function MoviesCard({ data }) {
   }
 
   return (
-    <div className="group w-[22rem] h-[500px] bg-zinc-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer border-2 border-transparent hover:border-yellow-500 relative">
+    <div className="group w-[18rem] sm:w-[22rem] h-[500px] bg-zinc-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer border-2 border-transparent hover:border-yellow-500 relative">
 
       {/* Thumbnail Section - Fixed Height */}
       <div className="overflow-hidden relative h-[60%]">
@@ -60,6 +75,29 @@ function MoviesCard({ data }) {
           alt={data?.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+
+        {/* Admin Controls Overlay */}
+        {isAdmin && (
+          <div className="absolute top-2 right-2 flex gap-2 z-20">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/admin/editmovie/${data._id}`);
+              }}
+              className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md transition-colors"
+              title="Edit Movie"
+            >
+              <FaEdit size={14} />
+            </button>
+            <button
+              onClick={handleDelete}
+              className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-md transition-colors"
+              title="Delete Movie"
+            >
+              <FaTrash size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content Section */}
@@ -79,9 +117,32 @@ function MoviesCard({ data }) {
             <span>{data?.language ? (Array.isArray(data.language) ? data.language.join(", ") : data.language) : "English"}</span>
           </div>
 
+          {/* Genre Display */}
+          <div className="flex flex-wrap gap-1 mb-2">
+            {(() => {
+              const rawGenres = data?.genres || data?.genre || [];
+              const genreList = Array.isArray(rawGenres) ? rawGenres : [rawGenres];
 
-          {/* Description (Optional, might encroach on space) */}
-          {/* <p className="text-xs text-gray-500 line-clamp-2">{data?.description}</p> */}
+              return genreList.slice(0, 3).map((g, idx) => {
+                let genreName = g;
+                // If object, use name. If ID string, lookup in apiGenres
+                if (typeof g === 'object') {
+                  genreName = g?.name || g?.title;
+                } else if (typeof g === 'string') {
+                  const match = apiGenres?.find(ag => ag._id === g);
+                  if (match) genreName = match.name;
+                }
+
+                if (!genreName) return null;
+
+                return (
+                  <span key={idx} className="text-[10px] uppercase font-bold text-zinc-200 border border-zinc-400 px-1 rounded">
+                    {genreName}
+                  </span>
+                );
+              });
+            })()}
+          </div>
         </div>
 
         {/* Buttons */}

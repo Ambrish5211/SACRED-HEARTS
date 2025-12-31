@@ -12,5 +12,11 @@ router.route("/logout").post(verifyJWT , logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)
 router.route("/get-user").get(verifyJWT, getUser)
 router.route("/recently-watched").get(verifyJWT, getRecentlyWatched)
+router.get("/me", verifyJWT, (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user
+  });
+});
 
 export default router;

@@ -7,6 +7,7 @@ const initialState = {
   isLoggedIn: false,
   isAdmin: false,
   watchList: [],
+  loading: true, // Start loading to wait for getUser
 };
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
@@ -37,6 +38,32 @@ export const login = createAsyncThunk("/auth/signin", async (data) => {
   }
 });
 
+export const logout = createAsyncThunk("/auth/logout", async () => {
+  try {
+    const response = axiosInstance.post("/users/logout");
+    toast.promise(response, {
+      loading: "Logging out...",
+      success: "Logged out successfully",
+      error: "Failed to log out",
+    });
+    return (await response).data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
+
+export const getUser = createAsyncThunk("/auth/me", async () => {
+  try {
+    const response = await axiosInstance.get("/users/me");
+    return response.data;
+  } catch (error) {
+    // Do not toast error here as it runs on every load for logged out users too usually, 
+    // or effectively silent fail if not logged in.
+    // But if user expects it to restore session, maybe log error.
+    console.log(error);
+  }
+});
+
 export const addToWatchList = createAsyncThunk("/auth/addToWatchList", async (movieId) => {
   try {
     const response = await axiosInstance.get(`/movies/addToWatchList/${movieId}`);
@@ -60,13 +87,7 @@ export const removeFromWatchList = createAsyncThunk("/auth/removeFromWatchList",
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logoutSuccess: (state) => {
-      state.isLoggedIn = false;
-      state.isAdmin = false;
-      state.watchList = [];
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createAccount.fulfilled, (state, action) => {
@@ -82,6 +103,11 @@ const authSlice = createSlice({
           state.isAdmin = action.payload.data.user.isAdmin;
           state.watchList = action.payload.data.user.watchList || [];
         }
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isLoggedIn = false;
+        state.isAdmin = false;
+        state.watchList = [];
       })
       .addCase(addToWatchList.fulfilled, (state, action) => {
         if (action?.payload?.success) {
@@ -105,6 +131,20 @@ const authSlice = createSlice({
             state.watchList = state.watchList.filter(m => m !== movieId && m._id !== movieId);
           }
         }
+      })
+      .addCase(getUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action?.payload?.success) {
+          state.isLoggedIn = true;
+          state.isAdmin = action.payload.user?.isAdmin || false;
+          state.watchList = action.payload.user?.watchList || [];
+        }
+      })
+      .addCase(getUser.rejected, (state) => {
+        state.loading = false;
       });
   },
 });

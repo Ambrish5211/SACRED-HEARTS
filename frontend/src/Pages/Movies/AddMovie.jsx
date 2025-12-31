@@ -151,7 +151,7 @@ function AddMovie() {
         try {
             let response;
             if (isEditMode) {
-                response = await axiosInstance.put(`/movies/update-movie/${id}`, formData, {
+                response = await axiosInstance.patch(`/movies/update-movie/${id}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
             } else {

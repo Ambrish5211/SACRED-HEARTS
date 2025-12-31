@@ -35,8 +35,7 @@ const topRatedMovies = asyncHandler(async (req, res) => {
       { $unwind: "$movie" },
       {
         $project: {
-          _id: 0,
-          movieId: "$movie._id",
+          _id: "$movie._id",
           title: "$movie.title",
           thumbnail: "$movie.thumbnail",
           duration: "$movie.duration",

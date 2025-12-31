@@ -114,7 +114,7 @@ function MoviesCard({ data, onDelete }) {
             <span className="w-1 h-1 rounded-full bg-gray-600"></span>
             <span>{formatDuration(data?.duration)}</span>
             <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-            <span>{data?.language ? (Array.isArray(data.language) ? data.language.join(", ") : data.language) : "English"}</span>
+            <span className="capitalize">{data?.languages ? (Array.isArray(data.languages) ? data.languages.join(", ") : data.languages) : (data?.language ? (Array.isArray(data.language) ? data.language.join(", ") : data.language) : "English")}</span>
           </div>
 
           {/* Genre Display */}

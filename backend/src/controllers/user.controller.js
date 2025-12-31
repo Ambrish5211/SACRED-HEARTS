@@ -95,8 +95,9 @@ const loginUser = asyncHandler(async (req, res) => {
   );
 
   const options = {
-    httpOnly: true, // means it is only accessible at server, cannot be modified at client level
+    httpOnly: true,
     secure: true,
+    sameSite: 'None',
   };
 
   return res
@@ -132,6 +133,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: 'None',
   };
 
   return res
@@ -173,6 +175,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const options = {  // to ensure safety of cookies 
       httpOnly: true,
       secure: true,
+      sameSite: 'None',
     };
 
     return res

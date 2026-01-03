@@ -259,7 +259,7 @@ export default function MovieDescription() {
                           }
 
                           return (
-                            <span key={idx} className="px-3 py-1 text-xs font-bold text-zinc-300 bg-zinc-800/80 rounded-full border border-zinc-700">
+                            <span key={idx} className="px-3 py-1 text-xs font-bold text-zinc-300 bg-zinc-800/80 rounded-full border border-zinc-700 capitalize">
                               {genreName}
                             </span>
                           );

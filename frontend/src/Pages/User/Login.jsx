@@ -1,7 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { isEmail } from "../../helpers/regexMatcher";
@@ -11,6 +11,7 @@ import { login } from "../../redux/slices/authSlice";
 function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [signinDetails, setSigninDetails] = useState({
     email: "",
@@ -40,7 +41,8 @@ function Signin() {
 
     const response = await dispatch(login(signinDetails));
     if (response?.payload?.success) {
-      navigate("/");
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     }
     setSigninDetails({
       email: "",

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 function RequireAuth({ allowedRoles }) {
   const { isLoggedIn, loading } = useSelector((state) => state.auth);
@@ -12,7 +12,9 @@ function RequireAuth({ allowedRoles }) {
     );
   }
 
-  return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
+  const location = useLocation();
+
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />;
 }
 
 export default RequireAuth;

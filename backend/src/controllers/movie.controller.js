@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Movie } from "../models/movie.model.js";
 import { Rating } from "../models/rating.model.js";
 import { Genre } from "../models/genre.model.js";

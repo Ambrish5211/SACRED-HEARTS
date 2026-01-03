@@ -94,16 +94,24 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
-  const options = {
+  const optionsAccessToken = {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
+    maxAge: 15 * 60 * 1000
+  };
+
+  const optionsRefreshToken = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    maxAge: 7 * 24 * 60 * 60 * 1000
   };
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, optionsAccessToken)
+    .cookie("refreshToken", refreshToken, optionsRefreshToken)
     .json(
       new ApiResponse(
         200,
@@ -176,6 +184,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
     return res

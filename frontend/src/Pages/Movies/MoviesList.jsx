@@ -11,6 +11,7 @@ function MoviesList() {
 
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isLongLoading, setIsLongLoading] = useState(false);
 
   const searchQuery = searchParams.get("search") || "";
   const filterGenre = searchParams.get("genre") || "";
@@ -18,9 +19,14 @@ function MoviesList() {
   const filterLanguage = searchParams.get("language") || "";
 
   async function fetchMovies() {
+    let timeoutId;
     try {
       setLoading(true);
+      setIsLongLoading(false);
 
+      timeoutId = setTimeout(() => {
+        setIsLongLoading(true);
+      }, 5000);
 
       // Determine endpoint: ONLY use movie-list if ABSOLUTELY NO parameters
       const hasFilters = searchQuery || filterGenre || filterYear || filterLanguage;
@@ -44,6 +50,7 @@ function MoviesList() {
       toast.error("Failed to load movies");
       console.error(error);
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   }
@@ -62,8 +69,13 @@ function MoviesList() {
 
         <div className="mb-10 flex flex-wrap justify-center gap-8 px-6 sm:px-12">
           {loading ? (
-            <div className="flex justify-center items-center w-full h-64">
+            <div className="flex flex-col justify-center items-center w-full h-64 gap-4">
               <span className="loading loading-spinner loading-lg text-yellow-500"></span>
+              {isLongLoading && (
+                <p className="text-yellow-500 text-lg font-medium animate-pulse text-center">
+                  Server is waking up, please wait...
+                </p>
+              )}
             </div>
           ) : (
             movies?.length > 0 ? (

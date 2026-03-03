@@ -7,6 +7,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import movieQueue from "../queue/movieQueue.js";
 
 
 
@@ -149,31 +150,30 @@ const addMovie = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Movie path is required")
     }
 
-    const thumbnail = await uploadOnCloudinary(thumbnailServerPath)
-    const movieUpload = await uploadOnCloudinary(movieServerPath)
-
-    if (!thumbnail || !movieUpload) {
-      throw new ApiError(400, "Failed to upload files to Cloudinary");
-    }
-
-
-    const durationInMinutes = movieUpload?.duration ? (movieUpload.duration) / 60 : 0;
-
     description = title + ':' + description;
 
-
+    // Create a movie entity with placeholder URLs pending Cloudinary upload.
     const movie = await Movie.create({
       title,
-      thumbnail: thumbnail.url,
-      videoFile: movieUpload.url,
+      thumbnail: "processing",
+      videoFile: "processing",
       description,
       languages,
       genres,
       owner,
       year,
-      duration: durationInMinutes,
+      duration: 0,
+    });
 
-    })
+    // Add job to background queue
+    await movieQueue.add("video-upload", {
+      movieId: movie._id,
+      thumbnailServerPath,
+      movieServerPath
+    }, {
+      attempts: 5,
+      backoff: { type: "exponential", delay: 5000 }
+    });
 
     return res.status(201).json(
       new ApiResponse(201, {
@@ -188,6 +188,42 @@ const addMovie = asyncHandler(async (req, res) => {
     throw new ApiError(500, `Something went wrong while adding the movie ${error}`)
   }
 })
+
+const checkStatus = asyncHandler(async (req, res) => {
+  try {
+    const movieId = req.params.id;
+
+    if (!movieId) {
+      throw new ApiError(400, "Movie ID is required");
+    }
+
+    const movie = await Movie.findById(movieId).select("thumbnail videoFile title");
+
+    // If movie doesn't exist, worker deleted it meaning the upload failed
+    if (!movie) {
+      return res.status(200).json(
+        new ApiResponse(200, { status: "failed" }, "Movie processing failed or was deleted")
+      );
+    }
+
+    // Check if worker is still processing 
+    if (movie.videoFile === "processing" || movie.thumbnail === "processing") {
+      return res.status(200).json(
+        new ApiResponse(200, { status: "processing" }, "Movie is still processing")
+      );
+    }
+
+    // Finished
+    return res.status(200).json(
+      new ApiResponse(200, {
+        status: "completed"
+      }, "Movie upload completed successfully")
+    );
+
+  } catch (error) {
+    throw new ApiError(500, `Error checking status: ${error.message}`);
+  }
+});
 
 
 const updateMovieDetails = asyncHandler(async (req, res) => {
@@ -496,7 +532,7 @@ const getWatchList = asyncHandler(async (req, res) => {
   }
 })
 
-export { topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList, getWatchList };
+export { topRatedMovies, moviesList, movieById, addMovie, updateMovieDetails, deleteMovie, searchMovies, autocompleteMovies, addToWatchList, removeFromWatchList, getWatchList, checkStatus };
 
 
 

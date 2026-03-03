@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getAllGenres } from "../../redux/slices/genreSlice";
-import HomeLayout from "../../Layouts/HomeLayout";
-import axiosInstance from "../../config/axiosInstance";
+import HomeLayout from "../../Layouts/HomeLayout.jsx";
+import axiosInstance from "../../config/axiosInstance.js";
 import { FaCloudUploadAlt, FaArrowLeft } from "react-icons/fa";
 
 function AddMovie() {
@@ -38,6 +38,8 @@ function AddMovie() {
             dispatch(getAllGenres());
         }
     }, [dispatch, genres?.length]);
+
+
 
     // Fetch movie details if in edit mode
     useEffect(() => {
@@ -161,8 +163,18 @@ function AddMovie() {
             }
 
             if (response?.data?.success) {
-                toast.success(isEditMode ? "Movie updated successfully!" : "Movie added successfully!");
-                navigate("/movies");
+                if (isEditMode) {
+                    toast.success("Movie updated successfully!");
+                    navigate("/movies");
+                } else {
+                    // Save movieId globally and navigate away — polling runs in App.jsx
+                    const movieId = response.data.data.movie._id;
+                    localStorage.setItem("pendingMovieUpload", movieId);
+                    // 'storage' event doesn't fire in same tab, so dispatch a custom event
+                    window.dispatchEvent(new Event("movieUploadQueued"));
+                    toast.success("Movie queued for upload! Processing in background.");
+                    navigate("/movies");
+                }
             }
         } catch (error) {
             console.error(error);

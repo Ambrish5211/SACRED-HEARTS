@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Black background -->
+  <rect width="64" height="64" fill="#000000"/>
+  
+  <!-- Bold italic "S" in Netflix red -->
+  <text
+    x="32"
+    y="52"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="58"
+    font-weight="bold"
+    font-style="italic"
+    text-anchor="middle"
+    fill="#E50914"
+  >S</text>
+</svg>

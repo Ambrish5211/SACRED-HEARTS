@@ -1,11 +1,7 @@
 import { Worker } from "bullmq";
 import { workerRedis } from "../config/redis.js";
-import connectDB from "../db/index.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Movie } from "../models/movie.model.js";
-
-// Connect to MongoDB
-await connectDB();
 
 const movieWorker = new Worker("video-upload", async (job) => {
     try {

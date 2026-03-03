@@ -1,23 +1,29 @@
 import dotenv from "dotenv";
-import connectDB from "./db/index.js";
-import { app } from "./app.js";
-import "./worker/movieWorker.js";
 
 dotenv.config({
   path: "./.env",
 });
 
-
+import connectDB from "./db/index.js";
+import { app } from "./app.js";
 
 connectDB()
-  .then(() => {
+  .then(async () => {
     app.on("error", (error) => {
       console.log("Error after db connection: ", error);
       throw error;
     });
-    app.listen(process.env.PORT || 4000, () => {
+
+    // Start worker after DB is connected
+    try {
+      await import("./worker/movieWorker.js");
+      console.log("[Worker] Movie worker started successfully.");
+    } catch (err) {
+      console.error("[Worker] Failed to start worker:", err.message);
+    }
+
+    app.listen(process.env.PORT || 4000, "0.0.0.0", () => {
       console.log("Server is listening on PORT", process.env.PORT || 4000);
-      console.log("[Worker] Movie worker is running and listening for jobs.");
     });
   })
   .catch((err) => {
